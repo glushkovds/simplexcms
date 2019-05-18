@@ -1,0 +1,15 @@
+
+.download-block{}
+.download-item{font-family: Arial, sans-serif; font-size: 14px; padding: 0 0 10px 40px}
+.download-item span{display: table; width: 100%}
+.download-item span span{display: table-cell; vertical-align: middle; height: 32px}
+.download-item span span span{display: inline; color: #666}
+.download-item-png{background: url('img/png.png') no-repeat 0 0}
+.download-item-doc{background: url('img/doc.png') no-repeat 0 0}
+.download-item-jpg{background: url('img/jpg.png') no-repeat 0 0}
+.download-item-log{background: url('img/log.png') no-repeat 0 0}
+.download-item-pdf{background: url('img/pdf.png') no-repeat 0 0}
+.download-item-txt{background: url('img/txt.png') no-repeat 0 0}
+.download-item-xls{background: url('img/xls.png') no-repeat 0 0}
+.download-item-zip{background: url('img/zip.png') no-repeat 0 0}
+

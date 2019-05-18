@@ -1,0 +1,16 @@
+.module-callback{position: relative}
+
+.callback-form{position: absolute; display: none; background: #ddd; border-radius: 4px; padding: 20px}
+.callback-form .pull-left{float: left}
+.callback-form .pull-right{float: right}
+.callback-form .edit{width: 100%; box-sizing: border-box}
+.callback-form .a-reminder{padding: 0 0 15px 6px; margin: 0}
+.popupblock .callback-form .a-reminder{position: absolute; left: 0px; bottom: -38px; font-size: 13px}
+.callback-form .a-reminder a, #top .a-reminder a{color: #333}
+.callback-form .wait{
+    background: url('../img/ajax-loader.gif') no-repeat 0 50%; padding: 0 0 0 24px
+}
+.callback-form .error{margin: 14px 0 0 0; color: #800}
+.callback-form .success{color: #080}
+.module-callback .popupblock{top: 40px; left: auto; right: 0; z-index: 1}
+.module-callback .popupblock.beak:before, .module-callback .popupblock.beak:after{left: 110px}

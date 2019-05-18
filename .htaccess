@@ -1,0 +1,16 @@
+AddDefaultCharset UTF-8
+
+<IfModule mod_rewrite.c>
+  RewriteEngine on
+
+  RewriteRule !\.(png|gif|jpg|jpeg|ico|js|css|php|htm|html|swf|mp3|txt|pdf|doc|docx|xls|xlsx|zip|rar|ppt|pptx|xml|ttf|woff|eot|otf)$    index.php
+  RewriteRule ^sitemap.xml    sitemap.php
+  RewriteRule ^robots.txt     robots.php
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|gif|jpg|jpeg|png|ico|swf)$">
+    Header set Cache-Control "max-age=31536000"
+  </FilesMatch>
+  Header set Access-Control-Allow-Origin "*"
+</IfModule>

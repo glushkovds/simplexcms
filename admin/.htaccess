@@ -1,0 +1,5 @@
+AddDefaultCharset UTF-8
+
+RewriteEngine on
+RewriteRule !\.(png|gif|jpg|ico|js|css|php|htm|html|swf|mp3|txt|pdf|doc|docx|xls|xlsx|zip|rar|ppt|pptx|woff|svg|eot|ttf)$    index.php
+

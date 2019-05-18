@@ -1,0 +1,4 @@
+.module-slider{width: 960px; height: 340px; position: relative}
+.module-slider .slide{display: block; width: 960px; height: 340px; position: absolute; left: 0; top: 0}
+.module-slider .slide .img{display: block; width: 960px; height: 340px; position: absolute; left: 0; top: 0}
+.module-slider .owl-item .slide{position: static}

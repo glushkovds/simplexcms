@@ -1,0 +1,127 @@
+*{outline:none}
+html{height:100%}
+body{height:100%;margin:0px;font-size:12px;line-height:1.4}
+form{margin:0px;}
+img {border:0px;}
+
+/*a{color:#666}*/
+a.js{text-decoration:none;border-bottom:1px dotted}
+
+#doc{width:1200px;margin:0 auto}
+#top{padding:20px 0px}
+
+.login .logo a{font-size: 24px; font-weight: normal; color: #D1CCCC; text-decoration: none}
+.login .logo a:hover{text-decoration: none}
+.login .logo span{color: #4D97CB}
+.login .form-actions .btn{padding-left: 30px; padding-right: 30px}
+
+.page-logo{padding: 5px 0 0 5px}
+.page-logo a{font-size: 24px; font-weight: normal; color: #D1CCCC; text-decoration: none}
+.page-logo a:hover{text-decoration: none}
+.page-logo span{color: #4D97CB}
+
+.table{width:100%;table-layout:fixed;border-collapse:collapse; margin: 0}
+.table td{vertical-align:top}
+.table-scrollable{}
+
+.table-data-head{padding-right:17px; background: #eee; border-bottom:1px solid #ccc} 
+.table-data-head .heading{}
+.table-data-head td{padding:0px 8px 0 4px; background: #eee}
+.table-data-head tr:first-child td{border-top: 0}
+.table-data-head td input{}
+.table-data-head .a-title{display:block; padding:0px 8px 0px 8px;margin:0px -8px;font-weight: 600; text-decoration:none; color: #222222; font-size: 14px}
+.table-data-head a:hover{}
+.table-data-head a span{display:block;padding-left:12px;background-image:url(../img/sort.png);background-position: 0 -5px;background-repeat:no-repeat}
+.table-data-head a span.order0{background-position:0 -136px}
+.table-data-head a span.order1{background-position:0 -283px}
+.table-data-head td{border-right:1px solid #ccc;cursor:default}
+.table-data-head td:last-child{border-right:0px}
+.table-data-head.table-data-head-filter{background: #fff}
+.table-data-head.table-data-head-filter td{background: #fff; padding: 8px}
+.table-data-head.table-data-head-filter .form-control{padding: 3px 6px; height: auto}
+
+.table-data-body.clear-selection { -moz-user-select: none; }
+.table-data-body.clear-selection td { -moz-user-select: none }
+
+.table-data-body td{border-bottom:1px solid #ccc;border-right:1px solid #ccc; word-wrap: break-word}
+.table-data-body td:last-child{border-right:0px}
+.table-data-body tr:first-child td{border-top: 0}
+.table-data-body tr:nth-child(odd) td{border-bottom:1px solid #ccc;background-color:#f9f9f9}
+.table-data-body tr.checked td{background-color:#ffffCC !important;border-bottom:1px solid #ccc}
+.table-data .table-data-body tr:hover td{background-color:#ffffE0;border-bottom:1px solid #ccc}
+.table-data .table-data-body td{padding:8px 8px;line-height:19px;cursor:default}
+.table-data-body .row-actions{height: 24px; overflow: hidden}
+.table-data-body .row-actions .btn-xs{width: 24px; height: 24px}
+.table-data-body .row-actions .btn-xs ~ .btn-xs{margin-left: 6px}
+.table-data-body .row-actions .btn-xs i{line-height: 19px}
+
+.table-data .table-data-body .row-save td{background: rgba(0,255,0,0.03)}
+
+#model-check-all, .model-row-check{}
+.model-row-icon{display:inline-block}
+
+#model-action{float:right}
+
+.plug-pagecontrol{float:right}
+.plug-pagecontrol a, .plug-pagecontrol span, .plug-pagecontrol i{font-family:Trebuchet MS;display:block;float:left;width:28px;text-align:center;margin-left:7px;line-height:20px;border:1px solid #BBB;text-decoration:none;border-radius:2px}
+.plug-pagecontrol a:hover{border-color:#777}
+.plug-pagecontrol span{border-color:#777;background-color:#E9E9E9}
+.plug-pagecontrol span.plug-pagecontrol-left,.plug-pagecontrol span.plug-pagecontrol-right{border-color:#BBB;color:#BBB;cursor:default}
+.plug-pagecontrol i{border-color:#FFF}
+
+.sf-form-int, .sf-form-date, .sf-form-datetime, .sf-form-string, .sf-form-select, .sf-form-text {border:1px solid #999;border-radius:4px;padding:5px}
+.sf-form-int {width:100px}
+.sf-form-string, .sf-form-text {width:98%;}
+.sf-form-select {min-width:200px;max-width:99.9%;padding:4px 5px}
+.sf-form input:focus, .sf-form select:focus{border-color:#555}
+.sf-form-table td{padding:15px 0px;border-top:1px solid #CCC;vertical-align:top;line-height:27px}
+.sf-form-table td i.red{color:red}
+.sf-form-table.hide-first-border tr:first-child td{border-top:0px}
+
+.sf-form-field-errors{display:none;color:red;font-size:11px;padding-top:3px;line-height:1.4}
+
+label.checkbox{padding-left: 20px}
+.page-content{padding-top: 15px; padding-bottom: 5px}
+.portlet{margin-bottom: 15px}
+
+a.black{display: inline-block; margin: 0 0 10px 0; font-weight: bold}
+
+.col-main .sf-bool-span{display: block; padding-top: 10px}
+
+.page-sidebar-menu > li > ul.sub-menu > li > a{padding-left: 25px !important}
+.page-sidebar-menu > li > ul.sub-menu > li > ul.sub-menu > li > a{padding-left: 40px !important}
+
+.enum-show-field{display: inline-block; min-height: 22px}
+.enum-show-field .btn{white-space: normal}
+.enum-show-field .dropdown-menu li > a{padding-left: 10px; padding-right: 10px}
+.npp-show-field{text-align: center}
+.npp-show-field a{text-decoration: none}
+
+.row-content{overflow: auto}
+
+
+#fancybox-wrap, #fancybox-wrap *{box-sizing: content-box !important}
+
+.alert-hub{position: fixed; width: 270px; top: 60px; right: 20px}
+
+
+.portlet > .portlet-title > .actions > .btn.btn-sm {margin-top: -7px}
+
+
+.filter-extra{float: right}
+.filter-extra-field{float: left; margin: 0 0 0 20px; line-height: 34px}
+.filter-extra .form-control{width: auto; max-width: 200px; display: inline-block}
+.filter-extra .btn-group{margin-right: 0 !important}
+
+
+.note ul{margin-bottom: 0px; padding-left: 13px}
+
+.widget{width: 320px; float: left; margin: 0 20px 20px 0}
+@media screen and (min-width: 1800px) {
+    .widget:nth-child(4n){clear: right}
+    .widget:nth-child(4n+1){clear: left}
+}
+
+.header .navbar-nav > li.dropdown .dropdown-toggle{font-size: 13px; height: 45px}
+
+.loader.loader-windows{height: 150px; background: url('../img/loader-windows.64.gif') no-repeat 50% 50%}

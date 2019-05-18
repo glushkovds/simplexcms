@@ -1,0 +1,11 @@
+.plug-form table {border-collapse: collapse; table-layout: auto; width: 100%}
+.plug-form table td {border-top: 1px solid rgba(0,0,0,0.2); padding: 12px 0px; vertical-align: top}
+.plug-form table tr:first-child td {border-top: 0px}
+.plug-form table td:first-child {padding-right: 20px; text-align: right; white-space: nowrap; width: 10px}
+.plug-form input.edit, .plug-form textarea {background-color: rgba(255,255,255,1); border: 0px; border: 1px solid #BBB; border-color: rgba(0,0,0,0.3); border-radius: 4px; box-sizing: border-box; padding: 5px; width: 100%}
+.plug-form .plug-spamcode input {color: #999; float: left; font-size: 28px; font-weight: bold; height: 28px; line-height: 1; margin-right: 10px; width: 65px}
+.plug-form hr {border-color: rgba(0,0,0,0.2); border-width: 1px 0px 0px 0px; margin: 12px 0px 18px 0px}
+.plug-form-label {color: #000; display: block; line-height: 1.2; padding-top: 8px}
+.plug-form-label span {color: #DD0000; font-weight: bold}
+.plug-form-error {clear: both; color: #DD0000; font-size: 80%}
+.plug-form-comment {clear: both; color: #888; color: rgba(0,0,0,0.5); font-size: 90%; font-style: italic; padding-top: 2px}

@@ -1,0 +1,1 @@
+<span class="plug-pagecontrol-info">Показаны записи: с <?php echo ($this->p*$this->p_on+1);?> по <?php echo min(array($this->count, $this->p*$this->p_on+$this->p_on));?> из <?php echo $this->count;?></span>
