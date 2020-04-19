@@ -121,10 +121,10 @@ class SFField {
 
     public static function setFieldValue(&$field, $group, $params, $row) {
         $p = false;
-        if (is_string($field)) {
-            $field = $this->fields[$field];
-            $p = true;
-        }
+//        if (is_string($field)) {
+//            $field = $this->fields[$field];
+//            $p = true;
+//        }
         $value = '';
         if ($group['name']) {
             $value = isset($params[$group['name']][$field->name]) ? $params[$group['name']][$field->name] : $field->defaultValue;

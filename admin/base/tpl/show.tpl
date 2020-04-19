@@ -16,7 +16,8 @@ $colRowActionsWidth = 14 + 32 * $this->rowActionsCnt;
 
             <?php $this->showActions() ?>
 
-            <div aria-hidden="true" role="basic" tabindex="-1" id="delete-dialog" class="modal fade" style="display: none;">
+            <div aria-hidden="true" role="basic" tabindex="-1" id="delete-dialog" class="modal fade"
+                 style="display: none;">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -47,21 +48,26 @@ $colRowActionsWidth = 14 + 32 * $this->rowActionsCnt;
 
             <div id="datatable_ajax_wrapper" class="dataTables_wrapper dataTables_extended_wrapper no-footer">
                 <div class="table-scrollable">
-                    <form id="model-show-form" method="post" action="./?p=0"> 
+                    <form id="model-show-form" method="post" action="./?p=0">
                         <div class="table-data">
 
                             <!-- Заголовки -->
                             <div class="table-data-head">
                                 <table cellspacing="0" class="table">
-                                    <col style="width:50px" />
+                                    <col style="width:50px"/>
                                     <?php foreach ($this->fields as $field): ?>
                                         <?php if ($field->isVisible): ?>
-                                            <col class="<?php echo @$field->params['screen_width'] ? 'screen-width-' . $field->params['screen_width'] : '' ?>" style="<?php echo implode('; ',$field->styleCol) ?>" />
+                                            <col class="<?php echo @$field->params['screen_width'] ? 'screen-width-' . $field->params['screen_width'] : '' ?>"
+                                                 style="<?php echo implode('; ', $field->styleCol) ?>"/>
                                         <?php endif ?>
                                     <?php endforeach ?>
-                                    <col class="col-row-actions" style="width: <?php echo $colRowActionsWidth ?>px" />
+                                    <col class="col-row-actions" style="width: <?php echo $colRowActionsWidth ?>px"/>
                                     <tr class="heading">
-                                        <td style="text-align:center; padding: 8px"><input type="checkbox" id="model-check-all" onclick="modelCheckAll(this)" /></td>
+                                        <td style="text-align:center; padding: 8px">
+                                            <input type="checkbox"
+                                                   id="model-check-all"
+                                                   onclick="modelCheckAll(this)"/>
+                                        </td>
                                         <?php foreach ($this->fields as $field): ?>
                                             <?php if ($field->isVisible): ?>
                                                 <td class="<?php echo @$field->params['screen_width'] ? 'screen-width-' . $field->params['screen_width'] : '' ?>">
@@ -81,13 +87,14 @@ $colRowActionsWidth = 14 + 32 * $this->rowActionsCnt;
                             <!-- Фильтры -->
                             <div class="table-data-head table-data-head-filter">
                                 <table cellspacing="0" class="table">
-                                    <col style="width:50px" />
+                                    <col style="width:50px"/>
                                     <?php foreach ($this->fields as $field): ?>
                                         <?php if ($field->isVisible): ?>
-                                            <col class="<?php echo @$field->params['screen_width'] ? 'screen-width-' . $field->params['screen_width'] : '' ?>" style="<?php echo implode('; ',implode('; ',$field->styleCol)) ?>" />
+                                            <col class="<?php echo @$field->params['screen_width'] ? 'screen-width-' . $field->params['screen_width'] : '' ?>"
+                                                 style="<?php echo implode('; ', $field->styleCol) ?>"/>
                                         <?php endif ?>
                                     <?php endforeach ?>
-                                    <col class="col-row-actions" style="width: <?php echo $colRowActionsWidth ?>px" />
+                                    <col class="col-row-actions" style="width: <?php echo $colRowActionsWidth ?>px"/>
                                     <tr class="filter">
                                         <td>&nbsp;</td>
                                         <?php foreach ($this->fields as $field): ?>
@@ -98,7 +105,8 @@ $colRowActionsWidth = 14 + 32 * $this->rowActionsCnt;
                                             <?php endif ?>
                                         <?php endforeach ?>
                                         <td>
-                                            <a href="javascript:;" onclick="resetFilter()" class="btn btn-xs btn-danger">Сброс</a>
+                                            <a href="javascript:;" onclick="resetFilter()"
+                                               class="btn btn-xs btn-danger">Сброс</a>
                                         </td>
                                     </tr>
                                 </table>
@@ -107,21 +115,27 @@ $colRowActionsWidth = 14 + 32 * $this->rowActionsCnt;
                             <!-- Данные -->
                             <div id="table-data-body" class="table-data-body" style="overflow:auto;overflow-y:scroll">
                                 <table cellspacing="0" class="table">
-                                    <col style="width:50px" />
+                                    <col style="width:50px"/>
                                     <?php foreach ($this->fields as $field): ?>
                                         <?php if ($field->isVisible): ?>
-                                            <col class="<?php echo @$field->params['screen_width'] ? 'screen-width-' . $field->params['screen_width'] : '' ?>" style="<?php echo implode('; ',$field->styleCol) ?>" />
+                                            <col class="<?php echo @$field->params['screen_width'] ? 'screen-width-' . $field->params['screen_width'] : '' ?>"
+                                                 style="<?php echo implode('; ', $field->styleCol) ?>"/>
                                         <?php endif ?>
                                     <?php endforeach ?>
-                                    <col class="col-row-actions" style="width: <?php echo $colRowActionsWidth ?>px" />
+                                    <col class="col-row-actions" style="width: <?php echo $colRowActionsWidth ?>px"/>
                                     <?php foreach ($rows as $row): ?>
-                                        <tr id="row-<?php echo $row[$this->pk->name] ?>" class="<?php echo $saveId === (int) $row[$this->pk->name] ? 'row-save' : '' ?>">
+                                        <tr id="row-<?php echo $row[$this->pk->name] ?>"
+                                            class="<?php echo $saveId === (int)$row[$this->pk->name] ? 'row-save' : '' ?>">
                                             <td style="text-align:center">
-                                                <input class="model-row-check" type="checkbox" name="row[]" value="<?php echo $row[$this->pk->name] ?>" onchange="modelCheck(this)" />
+                                                <input class="model-row-check" type="checkbox" name="row[]"
+                                                       value="<?php echo $row[$this->pk->name] ?>"
+                                                       onchange="modelCheck(this)"/>
                                             </td>
                                             <?php foreach ($this->fields as $field): ?>
                                                 <?php if ($field->isVisible): ?>
-                                                    <td class="<?php echo @$field->params['screen_width'] ? 'screen-width-' . $field->params['screen_width'] : '' ?>" id="field-<?php echo $field->name, '-', $row[$this->pk->name] ?>" style="<?php echo $field->styleCell ?>"><?php echo $this->showCell($field, $row) ?></td>
+                                                    <td class="<?php echo @$field->params['screen_width'] ? 'screen-width-' . $field->params['screen_width'] : '' ?>"
+                                                        id="field-<?php echo $field->name, '-', $row[$this->pk->name] ?>"
+                                                        style="<?php echo $field->styleCell ?>"><?php echo $this->showCell($field, $row) ?></td>
                                                 <?php endif ?>
                                             <?php endforeach ?>
                                             <td class="tac">
@@ -153,7 +167,7 @@ $colRowActionsWidth = 14 + 32 * $this->rowActionsCnt;
     </div>
 </div>
 
-<div aria-hidden="true" role="basic" tabindex="-1" id="modal-ajax" class="modal fade">								
+<div aria-hidden="true" role="basic" tabindex="-1" id="modal-ajax" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
             <div style="text-align: center; padding: 50px 0">
@@ -163,14 +177,14 @@ $colRowActionsWidth = 14 + 32 * $this->rowActionsCnt;
     </div>
 </div>
 
-<input type="hidden" id="save-id" value="<?php echo $saveId ?>" />
+<input type="hidden" id="save-id" value="<?php echo $saveId ?>"/>
 
 <style>
-<?php
-foreach ($this->fields as $field) {
-    if ($sw = (string) @$field->params['screen_width']) {
-        echo "@media screen and (max-width: {$sw}px) {.screen-width-$sw{display: none}}\n";
+    <?php
+    foreach ($this->fields as $field) {
+        if ($sw = (string) @$field->params['screen_width']) {
+            echo "@media screen and (max-width: {$sw}px) {.screen-width-$sw{display: none}}\n";
+        }
     }
-}
-?>
+    ?>
 </style>

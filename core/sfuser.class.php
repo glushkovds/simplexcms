@@ -1,6 +1,7 @@
 <?php
 
-class SFUser {
+class SFUser
+{
 
     public static $id = 0;
     public static $login = '';
@@ -9,11 +10,12 @@ class SFUser {
 
     /**
      *
-     * @var ZSFUserInstance 
+     * @var ZSFUserInstance
      */
     protected static $instance;
 
-    public static function login($type = 'site') {
+    public static function login($type = 'site')
+    {
 //        if (!isset(self::$instance)) {
         if ('site' == $type) {
             self::$instance = new ZSFUserInstance('user_id', 'user_hash', 'hash', 'ch', 'cs');
@@ -28,20 +30,23 @@ class SFUser {
         self::$role_name = self::$instance->role_name;
     }
 
-    public static function privIds() {
+    public static function privIds()
+    {
         return self::$instance->privIds();
     }
 
-    public static function privNames() {
+    public static function privNames()
+    {
         return self::$instance->privNames();
     }
 
     /**
-     * 
+     *
      * @param string|int|bool $priv - можно указать название привилегии, можно ее ID. Если false, то вернет все привилегии
      * @return bool|array
      */
-    public static function ican($priv = false) {
+    public static function ican($priv = false)
+    {
         return self::$instance->ican($priv);
     }
 
@@ -50,19 +55,21 @@ class SFUser {
      * @param string (optional) $field - если указано, возвращает конкретное поле
      * @return array
      */
-    public static function info($field = false) {
+    public static function info($field = false)
+    {
         return self::$instance->info($field);
     }
 
-    public static function create($data) {
+    public static function create($data)
+    {
         if (self::$id) {
             return array('success' => false, 'error_code' => 1, 'error' => 'Пользователь уже авторизован');
         }
 
-        $login = PlugPhone::extract((string) @$data['login']);
-        $pass = (string) @$data['pass'] ?: rand(100000, 999999);
-        $email = (string) @$data['email'];
-        $name = (string) @$data['name'];
+        $login = PlugPhone::extract((string)@$data['login']);
+        $pass = (string)@$data['pass'] ?: rand(100000, 999999);
+        $email = (string)@$data['email'];
+        $name = (string)@$data['name'];
 
         $errors = array();
         $login ? null : $errors[] = 'логин';
@@ -123,7 +130,8 @@ class SFUser {
 
 }
 
-class ZSFUserInstance {
+class ZSFUserInstance
+{
 
     public $id = 0;
     public $login = '';
@@ -139,14 +147,15 @@ class ZSFUserInstance {
     private $remHashName;
 
     /**
-     * 
+     *
      * @param type $idName
      * @param type $hashName
      * @param type $dbHashName
      * @param type $remIdName
      * @param type $remHashName
      */
-    public function __construct($idName, $hashName, $dbHashName, $remIdName, $remHashName) {
+    public function __construct($idName, $hashName, $dbHashName, $remIdName, $remHashName)
+    {
         $this->idName = $idName;
         $this->hashName = $hashName;
         $this->dbHashName = $dbHashName;
@@ -155,7 +164,8 @@ class ZSFUserInstance {
         $this->login();
     }
 
-    private function login() {
+    private function login()
+    {
         if (isset($_REQUEST['logout'])) {
             $_SESSION[$this->idName] = 0;
             $_SESSION[$this->hashName] = '';
@@ -181,14 +191,14 @@ class ZSFUserInstance {
                     SELECT user_id, role_id, login, $this->dbHashName, r.name role_name
                     FROM user u
                     JOIN user_role r USING(role_id)
-                    WHERE user_id=" . (int) $_SESSION[$this->idName] . " AND u.active=1 AND r.active=1
+                    WHERE user_id=" . (int)$_SESSION[$this->idName] . " AND u.active=1 AND r.active=1
                 ";
                 $r = SFDB::query($q);
                 if ($row = SFDB::fetch($r)) {
                     if ($_SESSION[$this->hashName] === $row[$this->dbHashName]) {
-                        $this->id = (int) $_SESSION[$this->idName];
+                        $this->id = (int)$_SESSION[$this->idName];
                         $this->login = $row['login'];
-                        $this->role_id = (int) $row['role_id'];
+                        $this->role_id = (int)$row['role_id'];
                         $this->role_name = $row['role_name'];
                     }
                 }
@@ -199,11 +209,14 @@ class ZSFUserInstance {
             SELECT priv_id, name
             FROM user_priv
             WHERE active=1
-                AND priv_id IN(SELECT priv_id FROM user_role_priv WHERE role_id" . ($this->role_id ? "=" . (int) $this->role_id : " IS NULL") . ")
+            AND (
+                priv_id IN(SELECT priv_id FROM user_role_priv WHERE role_id" . ($this->role_id ? '=' . (int)$this->role_id : " IS NULL") . ")
+                OR priv_id IN(SELECT priv_id FROM user_priv_personal WHERE user_id=" . $this->id . ")
+            )
         ";
-        $rows = SFDB::assoc($q);
-        foreach ($rows as $row) {
-            $this->priv_ids[(int) $row['priv_id']] = (int) $row['priv_id'];
+        $r = SFDB::query($q);
+        while ($row = SFDB::fetch($r)) {
+            $this->priv_ids[(int)$row['priv_id']] = (int)$row['priv_id'];
             $this->priv_names[$row['name']] = $row['name'];
         }
     }
@@ -213,7 +226,8 @@ class ZSFUserInstance {
      * @param string (optional) $field - если указано, возвращает конкретное поле
      * @return array
      */
-    public function info($field = false) {
+    public function info($field = false)
+    {
         if (!$this->id) {
             return false;
         }
@@ -231,15 +245,18 @@ class ZSFUserInstance {
         return $ret;
     }
 
-    public function privIds() {
+    public function privIds()
+    {
         return count($this->priv_ids) ? $this->priv_ids : array(0);
     }
 
-    public function privNames() {
+    public function privNames()
+    {
         return count($this->priv_names) ? $this->priv_names : array('');
     }
 
-    public function ican($priv) {
+    public function ican($priv)
+    {
         if (false === $priv) {
             return $this->priv_names;
         }

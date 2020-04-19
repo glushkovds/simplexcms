@@ -26,6 +26,7 @@ include 'core/sfdb.class.php';
 include 'core/sfuser.class.php';
 include 'core/sfcore.class.php';
 include 'core/sfpage.class.php';
+include 'core/sfbuffer.class.php';
 
 SFDB::connect();
 

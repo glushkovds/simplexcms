@@ -27,6 +27,7 @@ include '../core/sfservice.class.php';
 include '../core/sfextbase.class.php';
 include '../core/sfcombase.class.php';
 include '../core/sfmodbase.class.php';
+include '../core/sfbuffer.class.php';
 include 'base/base.class.php';
 include 'base/struct.class.php';
 include 'core/sfadmincore.class.php';

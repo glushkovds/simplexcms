@@ -26,11 +26,11 @@ $showRightCol |= (bool) $rightPortletsHTML;
 
 <form class="sf-form" method="post" action="?action=save" enctype="multipart/form-data">
     <input id="sf-form-submit" type="hidden" name="submit_save" value="" />
-    <input type="hidden" name="request_uri" value="<?php echo $_SERVER['REQUEST_URI'] ?>" />
-    <input type="hidden" id="info-table" value="<?php echo $this->table ?>" />
-    <input type="hidden" id="info-key-name" value="<?php echo @$this->pk->name ?>" />
-    <input type="hidden" id="info-key-value" value="<?php echo (int) @$row[$this->pk->name] ?>" />
-    <input type="hidden" id="group-ids" name="group_ids" value="<?php echo @$ids ?>" />
+    <input type="hidden" name="request_uri" value="<?= $_SERVER['REQUEST_URI'] ?>" />
+    <input type="hidden" id="info-table" value="<?= $this->table ?>" />
+    <input type="hidden" id="info-key-name" value="<?= @$this->pk->name ?>" />
+    <input type="hidden" id="info-key-value" value="<?= (int) @$row[$this->pk->name] ?>" />
+    <input type="hidden" id="group-ids" name="group_ids" value="<?= @$ids ?>" />
     
     <?php
     foreach ($this->fields as $field) {
@@ -41,14 +41,14 @@ $showRightCol |= (bool) $rightPortletsHTML;
     ?>
 
     <div class="row row-content">
-        <div class="col-md-<?php echo $showRightCol ? 8 : 12 ?> col-main">
+        <div class="col-md-<?= $showRightCol ? 8 : 12 ?> col-main">
             <div class="portlet ">
                 <div class="portlet-title">
                     <div class="caption">
                         <?php if (SFAdminCore::menuCurItem('icon')): ?>
-                            <i class="icon-<?php echo SFAdminCore::menuCurItem('icon') ?>"></i>
+                            <i class="icon-<?= SFAdminCore::menuCurItem('icon') ?>"></i>
                         <?php endif ?>
-                        <?php echo SFAdminCore::menuCurItem('name') ?> &mdash; <?php echo $title ?>
+                        <?= SFAdminCore::menuCurItem('name') ?> &mdash; <?= $title ?>
                     </div>
                 </div>
                 <div class="portlet-body form">
@@ -59,24 +59,24 @@ $showRightCol |= (bool) $rightPortletsHTML;
                                 <?php if (!$field->hidden): ?>
                                     <div class="form-group">
                                         <label class="col-md-3 control-label">
-                                            <?php echo $field->label ?>
+                                            <?= $field->label ?>
                                             <?php if ($field->required): ?>
                                                 <i class="red">*</i>
                                             <?php endif ?>
                                             <?php if ($isGroup): ?>
                                             <?php endif ?>
                                         </label>
-                                        <div class="col-md-9" style="<?php echo $isGroup ? 'padding-left: 30px; position: relative' : '' ?>">
+                                        <div class="col-md-9" style="<?= $isGroup ? 'padding-left: 30px; position: relative' : '' ?>">
                                             <?php if ($isGroup): ?>
                                                 <div style="position: absolute; top: 10px; left: 0">
-                                                    <input class="group-set" type="checkbox" name="set[<?php echo $field->name ?>]" value="" title="Изменить это поле" />
+                                                    <input class="group-set" type="checkbox" name="set[<?= $field->name ?>]" value="" title="Изменить это поле" />
                                                 </div>
                                             <?php endif ?>
-                                            <?php echo $field->input(@$row[$field->name]) ?>
-                                            <span id="help-error-<?php echo $field->name ?>" class="help-block help-errors" style="display: none"></span>
+                                            <?= $this->formFieldInput($field, $row) ?>
+                                            <span id="help-error-<?= $field->name ?>" class="help-block help-errors" style="display: none"></span>
                                             <?php if (!empty($field->help)): ?>
                                                 <span class="help-block">
-                                                    <?php echo $field->help ?>
+                                                    <?= $field->help ?>
                                                 </span>
                                             <?php endif ?>
                                         </div>
@@ -122,7 +122,7 @@ $showRightCol |= (bool) $rightPortletsHTML;
                                             <div class="portlet " rel="left">
                                                 <div class="portlet-title">
                                                     <div class="caption">
-                                                        <i class="fa fa-reorder"></i> <?php echo $group['label'] ?>
+                                                        <i class="fa fa-reorder"></i> <?= $group['label'] ?>
                                                     </div>
                                                 </div>
                                                 <div class="portlet-body form">
@@ -191,7 +191,7 @@ $showRightCol |= (bool) $rightPortletsHTML;
                             <div class="portlet " rel="right">
                                 <div class="portlet-title">
                                     <div class="caption">
-                                        <i class="fa fa-reorder"></i> <?php echo $group['label'] ?>
+                                        <i class="fa fa-reorder"></i> <?= $group['label'] ?>
                                     </div>
                                 </div>
                                 <div class="portlet-body form">
@@ -210,7 +210,7 @@ $showRightCol |= (bool) $rightPortletsHTML;
                     <div class="ajax-params">
                     </div>
                 <?php endif ?>
-                <?php echo $rightPortletsHTML ?>
+                <?= $rightPortletsHTML ?>
             </div>
         <?php endif ?>
     </div>

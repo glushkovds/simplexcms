@@ -728,6 +728,17 @@ class AdminBase {
     }
 
     /**
+     * Вывод html-кода для ввода данных на форме
+     * @param SFField $field
+     * @param array $row
+     * @return string
+     */
+    protected function formFieldInput($field, $row)
+    {
+        return $field->input(@$row[$field->name]);
+    }
+
+    /**
      * return @void
      */
     public function showActions() {
