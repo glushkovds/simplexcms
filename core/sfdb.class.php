@@ -338,13 +338,13 @@ class SFDBWhere implements ArrayAccess
     public function __construct($where)
     {
         if ($where instanceof static) {
-            $this->data = $where->toArray();
+            $this->data = array_filter($where->toArray());
         }
         if (is_string($where)) {
             $this->data[] = $where;
         }
         if (is_array($where)) {
-            $this->data = $where;
+            $this->data = array_filter($where);
         }
     }
 
@@ -404,7 +404,7 @@ class SFDBWhere implements ArrayAccess
      */
     public function add($where)
     {
-        $this->data = array_merge($this->data, (new SFDBWhere($where))->toArray());
+        $this->data = array_filter(array_merge($this->data, (new SFDBWhere($where))->toArray()));
     }
 
 }

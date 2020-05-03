@@ -61,7 +61,7 @@ abstract class SFModelBase implements ArrayAccess
      */
     public static function find($where, $orderBy = null, $limit = null, $assocKey = false)
     {
-        return static::findAdv()->where($where)->orderBy($orderBy)->limit($limit)->all($assocKey);
+        return static::findAdv()->andWhere($where)->orderBy($orderBy)->limit($limit)->all($assocKey);
     }
 
     /**
