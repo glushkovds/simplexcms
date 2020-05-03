@@ -391,9 +391,193 @@ class SFDBWhere implements ArrayAccess
         return '';
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return $this->data;
+    }
+
+    /**
+     * @param string|array|SFDBWhere $where
+     */
+    public function add($where)
+    {
+        $this->data = array_merge($this->data, (new SFDBWhere($where))->toArray());
+    }
+
+}
+
+/**
+ * Class SFDBAQ
+ * Simplex Framework DataBase Active Query
+ */
+class SFDBAQ
+{
+
+    protected $select = '*';
+    protected $from;
+    protected $where = '';
+    protected $orderBy = '';
+    protected $limit = '';
+    protected $asArray = false;
+    protected $modelClass;
+
+    /**
+     * @param bool $asArray
+     * @return $this
+     */
+    public function asArray(bool $asArray = true)
+    {
+        $this->asArray = $asArray;
+        return $this;
+    }
+
+    /**
+     * @param string|array $fields
+     * @return $this
+     */
+    public function select($fields)
+    {
+        $this->select = $fields;
+        return $this;
+    }
+
+    /**
+     * @param string $table
+     * @return $this
+     */
+    public function from($table)
+    {
+        $this->from = $table;
+        return $this;
+    }
+
+    /**
+     * @param string|array|SFDBWhere $where
+     * @return $this
+     */
+    public function where($where)
+    {
+        $this->where = $where;
+        return $this;
+    }
+
+    /**
+     * @param string|array|SFDBWhere $where
+     * @return $this
+     */
+    public function andWhere($where)
+    {
+        $this->where = new SFDBWhere($this->where);
+        $this->where->add($where);
+        return $this;
+    }
+
+    /**
+     * @param string $orderBy
+     * @return $this
+     */
+    public function orderBy($orderBy)
+    {
+        $this->orderBy = $orderBy;
+        return $this;
+    }
+
+    /**
+     * @param string $limit
+     * @return $this
+     */
+    public function limit($limit)
+    {
+        $this->limit = $limit;
+        return $this;
+    }
+
+    /**
+     * @param string $class
+     * @return $this
+     */
+    public function setModelClass(string $class)
+    {
+        $this->modelClass = $class;
+        return $this;
+    }
+
+    protected function getSelect()
+    {
+        if (is_array($this->select)) {
+            return implode(', ', $this->select);
+        }
+        if (is_string($this->select)) {
+            return $this->select;
+        }
+        throw new \Exception('Bad select statement');
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function build()
+    {
+        if (empty($this->from) || !is_string($this->from)) {
+            throw new \Exception('Bad from statement');
+        }
+        $q[] = 'SELECT ' . $this->getSelect();
+        $q[] = "FROM `$this->from`";
+        $q[] = new SFDBWhere($this->where);
+        if ($orderBy = (string)$this->orderBy) {
+            $q[] = 'ORDER BY ' . SFDB::escape($orderBy);
+        }
+        if ($limit = (string)$this->limit) {
+            $q[] = 'LIMIT ' . SFDB::escape($limit);
+        }
+        return implode(' ', $q);
+    }
+
+    /**
+     * @param string|array|null $assocKey
+     * @return array|SFModelBase[]
+     * @throws Exception
+     */
+    public function all($assocKey = null)
+    {
+
+        if ((is_bool($assocKey) || !$this->asArray) && empty($this->modelClass)) {
+            throw new \Exception('Model class not specified');
+        }
+        $q = $this->build();
+        $r = SFDB::query($q);
+        $result = [];
+        while ($row = SFDB::fetch($r)) {
+            $payload = $this->asArray ? $row : (new $this->modelClass)->fill($row);
+            if ($assocKey === true) {
+                $result[$row[$this->modelClass::$primaryKeyName]] = $payload;
+            } elseif (is_array($assocKey)) {
+                $assocKey = array_values($assocKey);
+                switch (count($assocKey)) {
+                    case 1:
+                        $result[$row[$assocKey[0]]] = $payload;
+                        break;
+                    case 2:
+                        $result[$row[$assocKey[0]]][$row[$assocKey[1]]] = $payload;
+                        break;
+                    case 3:
+                        $result[$row[$assocKey[0]]][$row[$assocKey[1]]][$row[$assocKey[2]]] = $payload;
+                        break;
+                    case 0:
+                    default:
+                        $result[] = $payload;
+                }
+            } elseif (is_string($assocKey)) {
+                $result[$row[$assocKey]] = $payload;
+            } else {
+                $result[] = $payload;
+            }
+        }
+        return $result;
     }
 
 }

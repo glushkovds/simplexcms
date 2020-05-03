@@ -54,29 +54,23 @@ abstract class SFModelBase implements ArrayAccess
     /**
      *
      * @param string|array|SFDBWhere $where
+     * @param null $orderBy
+     * @param null $limit
      * @param bool|string $assocKey [optional = false] get result array with model id's (or other field) in keys
      * @return SFModelBase[]
      */
     public static function find($where, $orderBy = null, $limit = null, $assocKey = false)
     {
-        $whereObj = new SFDBWhere($where);
-        $q = "SELECT * FROM " . static::$table . " $whereObj";
-        if ($orderBy) {
-            $q .= " ORDER BY " . SFDB::escape($orderBy);
-        }
-        if ($limit) {
-            $q .= " LIMIT " . SFDB::escape($limit);
-        }
-        $result = [];
-        foreach (SFDB::assoc($q) as $row) {
-            $model = (new static)->fill($row);
-            if (is_bool($assocKey)) {
-                $assocKey ? $result[$row[static::$primaryKeyName]] = $model : $result[] = $model;
-            } elseif (is_string($assocKey)) {
-                $result[$row[$assocKey]] = $model;
-            }
-        }
-        return $result;
+        return static::findAdv()->where($where)->orderBy($orderBy)->limit($limit)->all($assocKey);
+    }
+
+    /**
+     * @return SFDBAQ
+     */
+    public static function findAdv()
+    {
+        $query = (new SFDBAQ())->from(static::$table)->setModelClass(static::class);
+        return $query;
     }
 
     /**
