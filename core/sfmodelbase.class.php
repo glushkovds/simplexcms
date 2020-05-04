@@ -16,6 +16,8 @@
 abstract class SFModelBase implements ArrayAccess
 {
 
+    const FLAG_IGNORE = 1;
+
     protected $id;
     protected $data = [];
     protected $dataBeforeUpdate = [];
@@ -147,7 +149,7 @@ abstract class SFModelBase implements ArrayAccess
      * @param array $data [optional]
      * @return bool
      */
-    public function insert(array $data = null)
+    public function insert(array $data = null, $flags = 0)
     {
         $data && $this->fill($data);
         $result = false;
@@ -156,7 +158,8 @@ abstract class SFModelBase implements ArrayAccess
             foreach ($this->data as $key => $value) {
                 $set[] = "`$key` = " . self::prepareValue($value);
             }
-            $q = "INSERT INTO " . static::$table . " SET " . implode(', ', $set);
+            $ignore = $flags & static::FLAG_IGNORE ? ' IGNORE' : '';
+            $q = "INSERT$ignore INTO " . static::$table . " SET " . implode(', ', $set);
             if ($result = $this->query($q)) {
                 $this->id = SFDB::insertID();
             }
@@ -224,6 +227,15 @@ abstract class SFModelBase implements ArrayAccess
             $q = "DELETE FROM " . static::$table . " $whereObj";
             return SFDB::query($q);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public static function truncate()
+    {
+        $q = "TRUNCATE TABLE " . static::$table;
+        return (bool)SFDB::query($q);
     }
 
     /**
