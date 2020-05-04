@@ -374,18 +374,7 @@ class SFDBWhere implements ArrayAccess
 
     public function __toString()
     {
-        $data = $this->data;
-        if ($data) {
-            $isAssociative = false;
-            foreach ($data as $index => $value) {
-                $isAssociative = (string)$index !== (string)(int)$index;
-                break;
-            }
-            if ($isAssociative) {
-                foreach ($data as $index => $value) {
-                    $data[$index] = "`$index` = " . SFModelBase::prepareValue($value);
-                }
-            }
+        if ($data = static::prepareData($this->data)) {
             return "WHERE " . implode(' AND ', $data);
         }
         return '';
@@ -396,7 +385,27 @@ class SFDBWhere implements ArrayAccess
      */
     public function toArray()
     {
-        return $this->data;
+        return static::prepareData($this->data);
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected static function prepareData(array $data)
+    {
+        $result = [];
+        foreach ($data as $index => $value) {
+            if (!($value = trim($value))) {
+                continue;
+            }
+            if ($isAssociative = (string)$index !== (string)(int)$index) {
+                $result[] = "`$index` = " . SFModelBase::prepareValue($value);
+            } else {
+                $result[] = $value;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -404,7 +413,7 @@ class SFDBWhere implements ArrayAccess
      */
     public function add($where)
     {
-        $this->data = array_filter(array_merge($this->data, (new SFDBWhere($where))->toArray()));
+        $this->data = array_filter(array_merge($this->toArray(), (new SFDBWhere($where))->toArray()));
     }
 
 }
