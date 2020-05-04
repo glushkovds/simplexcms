@@ -589,4 +589,9 @@ class SFDBAQ
         return $result;
     }
 
+    public function __toString()
+    {
+        return $this->build();
+    }
+
 }
