@@ -1,6 +1,7 @@
 <?php
 
-class AdminBase {
+class AdminBase
+{
 
     public $name = '';
     protected $action = '';
@@ -63,14 +64,15 @@ class AdminBase {
      */
     public $ids;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->title = SFAdminCore::menuCurItem('name');
         $this->ids = isset($_GET['ids']) ? $_GET['ids'] : '';
         if (isset($_POST['group_ids'])) {
             $this->ids = $_POST['group_ids'];
         }
 
-        $this->p = & $_SESSION[$this->table]['p'];
+        $this->p = &$_SESSION[$this->table]['p'];
         if (!isset($this->p)) {
             $this->p = 0;
         }
@@ -78,14 +80,15 @@ class AdminBase {
         $this->initTableName();
         $this->initTableData();
 
-        $this->canAdd = $this->tableData['priv_add'] ? SFUser::ican((int) $this->tableData['priv_add']) : true;
+        $this->canAdd = $this->tableData['priv_add'] ? SFUser::ican((int)$this->tableData['priv_add']) : true;
         $this->canCopy = $this->canAdd;
-        $this->canEdit = $this->tableData['priv_edit'] ? SFUser::ican((int) $this->tableData['priv_edit']) : true;
+        $this->canEdit = $this->tableData['priv_edit'] ? SFUser::ican((int)$this->tableData['priv_edit']) : true;
         $this->canEditGroup = $this->canEdit;
-        $this->canDelete = $this->tableData['priv_delete'] ? SFUser::ican((int) $this->tableData['priv_delete']) : true;
+        $this->canDelete = $this->tableData['priv_delete'] ? SFUser::ican((int)$this->tableData['priv_delete']) : true;
     }
 
-    protected function initTableName() {
+    protected function initTableName()
+    {
         if (empty($this->table)) {
             $row = SFAdminCore::menuCurItem();
             if ($row['model']) {
@@ -95,16 +98,18 @@ class AdminBase {
         $this->name = $this->table;
     }
 
-    protected function initTableData() {
+    protected function initTableData()
+    {
         $q = "SELECT * FROM struct_table WHERE name = '$this->table'";
         $this->tableData = SFDB::result($q);
         $this->tableId = $this->tableData['table_id'];
     }
 
-    protected function deleteField() {
+    protected function deleteField()
+    {
         $fieldName = SFDB::escape(@$_GET['field_name']);
         $keyName = SFDB::escape(@$_GET['key_name']);
-        $keyValue = (int) @$_GET['key_value'];
+        $keyValue = (int)@$_GET['key_value'];
         $field = $this->fields[$fieldName];
         $q = "select $field->name from $this->table where $keyName = $keyValue";
         $row = SFDB::result($q);
@@ -116,7 +121,8 @@ class AdminBase {
         echo json_encode(array('success' => $success));
     }
 
-    public function content() {
+    public function content()
+    {
         $row = SFAdminCore::menuCurItem();
 
         if ($row['model']) {
@@ -157,12 +163,13 @@ class AdminBase {
         }
     }
 
-    protected function widgets() {
+    protected function widgets()
+    {
         $q = "SELECT * FROM admin_widget WHERE active = 1 ORDER BY npp, widget_id";
         $rows = SFDB::assoc($q);
         echo count($rows) ? '<div class="widgets">' : '';
         foreach ($rows as $row) {
-            if (!$row['priv_id'] || SFUser::ican((int) $row['priv_id'])) {
+            if (!$row['priv_id'] || SFUser::ican((int)$row['priv_id'])) {
                 $class = $row['class'];
                 $widget = new $class($row);
                 echo $widget->execute();
@@ -172,7 +179,8 @@ class AdminBase {
         echo '<div class="clearfix"></div>' . "\n";
     }
 
-    protected function changeENUM($withRedirect = true) {
+    protected function changeENUM($withRedirect = true)
+    {
         $field = SFDB::escape($_REQUEST['field']);
         $new = SFDB::escape($_REQUEST['newstatus']);
         $new = $new ? "'$new'" : 'null';
@@ -188,7 +196,7 @@ class AdminBase {
             AdminPlugAlert::error("Поле <b>{$fieldDB['label']}</b> только для чтения!", './');
         }
 
-        $id = (int) $_REQUEST[$this->pk->name];
+        $id = (int)$_REQUEST[$this->pk->name];
         $q = "UPDATE `$this->table` SET `$field` = $new WHERE {$this->pk->name} = $id";
         SFDB::query($q);
         if ($withRedirect) {
@@ -197,7 +205,8 @@ class AdminBase {
         }
     }
 
-    protected function changeNPP() {
+    protected function changeNPP()
+    {
         $field = SFDB::escape($_REQUEST['field']);
 
         $q = "SELECT * FROM struct_data WHERE table_id = {$this->tableData['table_id']} AND name = '$field'";
@@ -208,14 +217,15 @@ class AdminBase {
         }
 
         $inc = isset($_GET['up']) ? '-1' : '+1';
-        $id = (int) $_REQUEST[$this->pk->name];
+        $id = (int)$_REQUEST[$this->pk->name];
         $q = "UPDATE `$this->table` SET `$field` = `$field` $inc WHERE {$this->pk->name} = $id";
         SFDB::query($q);
         header('location: ./');
         exit;
     }
 
-    private function index() {
+    private function index()
+    {
         $cur = SFAdminCore::menuCurItem();
         $cur_id = isset($cur['menu_id']) ? $cur['menu_id'] : 0;
         $menu = SFAdminCore::menu();
@@ -224,7 +234,8 @@ class AdminBase {
         }
     }
 
-    public final function execute($is_print = false) {
+    public final function execute($is_print = false)
+    {
         if ($is_print) {
             $this->content();
         } else {
@@ -234,7 +245,8 @@ class AdminBase {
         }
     }
 
-    protected function getSelectSelect() {
+    protected function getSelectSelect()
+    {
         $ar = array();
         foreach ($this->fks as $field) {
             $fkAdd = '' . $field->fk->table . $field->name . '.' . $field->fk->label . ' ' . $field->name . '_label';
@@ -257,7 +269,8 @@ class AdminBase {
         return $ret;
     }
 
-    protected function getSelectFrom() {
+    protected function getSelectFrom()
+    {
         $q = "\r\nFROM " . $this->table;
         foreach ($this->fks as $field) {
             if ($field->fk->table != $this->table) {
@@ -267,14 +280,16 @@ class AdminBase {
         return $q;
     }
 
-    protected function getSelectWhere() {
+    protected function getSelectWhere()
+    {
         $where = array_merge($this->where_sys, $this->where);
         $ret = count($where) ? "\r\nWHERE " . join(' AND ', $where) : '';
         self::$currentWhere = $ret;
         return $ret;
     }
 
-    protected function getSelectOrderBy() {
+    protected function getSelectOrderBy()
+    {
         $order = array();
         if ($this->order) {
             $order[] = $this->order . ($this->desc ? ' DESC' : '');
@@ -285,18 +300,21 @@ class AdminBase {
         return count($order) ? "\r\nORDER BY " . join(', ', $order) : "";
     }
 
-    protected function getSelectLimit() {
+    protected function getSelectLimit()
+    {
         return $this->isHierarchy ? "" : "\r\nLIMIT " . $this->p * $this->p_on . ", " . $this->p_on;
     }
 
-    protected function getQueryCount() {
+    protected function getQueryCount()
+    {
         $q = "SELECT COUNT(*) cnt";
         $q .= $this->getSelectFrom();
         $q .= $this->getSelectWhere();
         return $q;
     }
 
-    protected function getQuerySelect() {
+    protected function getQuerySelect()
+    {
         $q = $this->getSelectSelect();
         $q .= $this->getSelectFrom();
         $q .= $this->getSelectWhere();
@@ -305,7 +323,8 @@ class AdminBase {
         return $q;
     }
 
-    protected function prepareWhere() {
+    protected function prepareWhere()
+    {
         foreach ($this->fields as $field) {
             $_SESSION[$this->table]['filter'][$field->name] = isset($_SESSION[$this->table]['filter'][$field->name]) ? $_SESSION[$this->table]['filter'][$field->name] : '';
             $_SESSION[$this->table]['filter'][$field->name] = isset($_REQUEST['filter'][$field->name]) ? $_REQUEST['filter'][$field->name] : $_SESSION[$this->table]['filter'][$field->name];
@@ -326,7 +345,8 @@ class AdminBase {
         }
     }
 
-    public function show() {
+    public function show()
+    {
 
         $this->prepareWhere();
 
@@ -360,9 +380,9 @@ class AdminBase {
 
             $tree = array();
             while ($row = SFDB::fetch($r)) {
-                $tree[(int) $row[$this->pid->name]][(int) $row[$this->pk->name]] = $row;
+                $tree[(int)$row[$this->pid->name]][(int)$row[$this->pk->name]] = $row;
             }
-            $id_start = isset($_SESSION[$this->table]['filter'][$this->pid->name]) ? (int) $_SESSION[$this->table]['filter'][$this->pid->name] : 0;
+            $id_start = isset($_SESSION[$this->table]['filter'][$this->pid->name]) ? (int)$_SESSION[$this->table]['filter'][$this->pid->name] : 0;
             $list = SFService::tree2list($tree, $id_start);
 //            print_r($tree);
 //            print_r($list);
@@ -378,22 +398,24 @@ class AdminBase {
             }
         }
 
-        $saveId = (int) @$_GET['save_id'];
+        $saveId = (int)@$_GET['save_id'];
 
         include dirname(__FILE__) . '/tpl/show.tpl';
     }
 
     /**
-     * 
+     *
      * @param SFField $field
      * @param array $row
      * @return void Use echo
      */
-    protected function showCell($field, $row) {
+    protected function showCell($field, $row)
+    {
         echo $field->show($row);
     }
 
-    protected function initTable() {
+    protected function initTable()
+    {
 
         if ($this->tableId) {
 
@@ -448,7 +470,7 @@ class AdminBase {
             if (empty($this->order)) {
                 if ($this->tableData['order_by']) {
                     $this->order = $this->tableData['order_by'];
-                    $this->desc = (int) $this->tableData['order_desc'];
+                    $this->desc = (int)$this->tableData['order_desc'];
                 } else {
                     $this->order = $this->order2;
                     $this->order2 = '';
@@ -463,7 +485,8 @@ class AdminBase {
      * Загрузка параметров из БД
      * @return array
      */
-    protected function tableParamsLoad() {
+    protected function tableParamsLoad()
+    {
         $q = "
             SELECT param_id, param_pid, pos, t1.name, t1.label, t1.params, t2.class, '$this->table' `table`
             FROM struct_param t1
@@ -478,7 +501,8 @@ class AdminBase {
      * Инициализация параметров. Загружаются из $this->tableParamsLoad()
      * @return void
      */
-    protected function tableParamsInit() {
+    protected function tableParamsInit()
+    {
         $params = $this->tableParamsLoad();
         if (count($params)) {
             foreach ($params[''] as $group_id => $group) {
@@ -500,17 +524,25 @@ class AdminBase {
 //        print_r($this->params);
     }
 
-    protected function filter() {
+    protected function filter()
+    {
         if ($this->is_filter) {
             include dirname(__FILE__) . '/tpl/filter.tpl';
         }
     }
 
-    protected function filterExtra($addClearfix = true) {
+    protected function filterExtra($addClearfix = true)
+    {
         include 'tpl/filter.extra.tpl';
     }
 
-    public function addField($field) {
+    protected function filterField($field)
+    {
+        return $field->filter(@$_SESSION[$this->table]['filter'][$field->name]);
+    }
+
+    public function addField($field)
+    {
         if ($field instanceof SFField) {
             $this->fields[$field->name] = &$field;
 
@@ -540,8 +572,9 @@ class AdminBase {
         }
     }
 
-    public function boolChange() {
-        $pk = (int) $_REQUEST['pk'];
+    public function boolChange()
+    {
+        $pk = (int)$_REQUEST['pk'];
         $field = $_REQUEST['field'];
         if ($pk && isset($this->fields[$field])) {
 
@@ -563,7 +596,8 @@ class AdminBase {
         echo 'error';
     }
 
-    public function form() {
+    public function form()
+    {
 
         if (isset($_GET['ids']) && count(explode(',', $_GET['ids'])) == 1) {
             header("location: ?action=form&{$this->pk->name}={$_GET['ids']}");
@@ -585,7 +619,7 @@ class AdminBase {
             AdminPlugAlert::error('Ошибка! Недостаточно прав для редактирования записей в данном разделе', './');
         }
 
-        $row = & $this->row;
+        $row = &$this->row;
         $row = array();
         foreach ($this->fields as $index => $field) {
             if ($field instanceof SFFVirtual) {
@@ -598,9 +632,9 @@ class AdminBase {
         }
 
         foreach ($this->fks as $field) {
-            $fv = & $_SESSION[$this->table]['filter'][$field->name];
+            $fv = &$_SESSION[$this->table]['filter'][$field->name];
             if (@$fv !== '' && @$fv !== NULL) {
-                $row[$field->name] = (int) @$fv;
+                $row[$field->name] = (int)@$fv;
             }
         }
 
@@ -610,7 +644,7 @@ class AdminBase {
 
         $pk = 0;
         if (!empty($_REQUEST[$this->pk->name])) {
-            $pk = (int) $_REQUEST[$this->pk->name];
+            $pk = (int)$_REQUEST[$this->pk->name];
             $where[] = $this->pk->name . "=" . $pk;
             $q = "SELECT * FROM " . $this->table . " WHERE " . join(' AND ', $where);
             if ($rrow = SFDB::result($q)) {
@@ -741,15 +775,18 @@ class AdminBase {
     /**
      * return @void
      */
-    public function showActions() {
+    public function showActions()
+    {
         include 'tpl/show.actions.tpl';
     }
 
-    public function rowActions($row) {
+    public function rowActions($row)
+    {
         include 'tpl/show.actions.row.tpl';
     }
 
-    public function copy() {
+    public function copy()
+    {
         $q = "SELECT * FROM $this->table WHERE {$this->pk->name} in ($this->ids)";
         $rows = SFDB::assoc($q);
         $fieldNames = array('name', 'title', 'label');
@@ -763,7 +800,7 @@ class AdminBase {
                     $value = "Копия $value";
                 }
                 if ($value === null) {
-                    
+
                 } else {
                     $set[] = "$key = '$value'";
                 }
@@ -783,7 +820,8 @@ class AdminBase {
         exit;
     }
 
-    public function validate() {
+    public function validate()
+    {
         foreach ($this->fields as $field) {
             if ($errors = $field->check()) {
                 foreach ($errors as $error) {
@@ -805,7 +843,8 @@ class AdminBase {
         }
     }
 
-    public function saveGroup() {
+    public function saveGroup()
+    {
         $success = true;
         $ids = @$_POST['group_ids'];
         $set = array();
@@ -885,10 +924,11 @@ class AdminBase {
     }
 
     /**
-     * 
+     *
      * @return bool|int pkValue | false
      */
-    public function save() {
+    public function save()
+    {
 
         if (!empty($_POST['group_ids'])) {
             return $this->saveGroup();
@@ -930,7 +970,7 @@ class AdminBase {
                 if ($field_path && $field_alias) {
                     if ($this->pid) {
                         $where = $this->where_sys;
-                        $where[] = "" . $this->table . "." . $this->pk->name . "=" . (int) $_POST[$this->pk->name];
+                        $where[] = "" . $this->table . "." . $this->pk->name . "=" . (int)$_POST[$this->pk->name];
                         $q = "
                             SELECT " . $this->table . "." . $this->pk->name . ", " . $this->table . "." . $this->pid->name . ", " . $this->table . "." . $field_alias->name . ", t2." . $field_path->name . "
                             FROM " . $this->table . "
@@ -975,7 +1015,7 @@ class AdminBase {
                         }
                     } else {
                         $where = $this->where_sys;
-                        $where[] = "" . $this->table . "." . $this->pk->name . "=" . (int) $_POST[$this->pk->name];
+                        $where[] = "" . $this->table . "." . $this->pk->name . "=" . (int)$_POST[$this->pk->name];
                         $path = '/' . $_POST[$field_alias->name] . '/';
                         $q = "UPDATE " . $this->table . " SET " . $field_path->name . "='" . $path . "' WHERE " . join(" AND ", $where);
                         SFDB::query($q);
@@ -992,7 +1032,8 @@ class AdminBase {
         return count($this->errors) ? false : $pkValue;
     }
 
-    protected function getQueryInsert() {
+    protected function getQueryInsert()
+    {
         $keys = $values = array();
         foreach ($this->fields as $field) {
             if ($field->isVirtual) {
@@ -1019,8 +1060,9 @@ class AdminBase {
         return $q;
     }
 
-    protected function getQueryUpdate() {
-        $q = "SELECT * FROM " . $this->table . " WHERE " . $this->pk->name . "=" . (int) $_POST[$this->pk->name];
+    protected function getQueryUpdate()
+    {
+        $q = "SELECT * FROM " . $this->table . " WHERE " . $this->pk->name . "=" . (int)$_POST[$this->pk->name];
         $row = SFDB::result($q);
 
         $q = "UPDATE " . $this->table . " SET";
@@ -1056,7 +1098,7 @@ class AdminBase {
             }
         }
         $q = substr($q, 0, -1);
-        $q .= " WHERE " . $this->pk->name . "=" . (int) $_POST[$this->pk->name];
+        $q .= " WHERE " . $this->pk->name . "=" . (int)$_POST[$this->pk->name];
         /*
           echo $q;
           die();
@@ -1065,7 +1107,8 @@ class AdminBase {
         return $q;
     }
 
-    protected function getParams() {
+    protected function getParams()
+    {
         $params = array();
         $MY_POST = $_POST;
         foreach ($this->params as $paramz) {
@@ -1105,9 +1148,10 @@ class AdminBase {
      * @param int $id
      * @return int errno
      */
-    protected function deleteItem($id) {
+    protected function deleteItem($id)
+    {
         $where = $this->where_sys;
-        $where[] = $this->pk->name . "=" . (int) $id;
+        $where[] = $this->pk->name . "=" . (int)$id;
         $q = "DELETE FROM " . $this->table . " WHERE " . join(' AND ', $where);
         SFDB::query($q);
         return SFDB::errno() ? SFDB::errno() . ': ' . SFDB::error() : '';
@@ -1117,7 +1161,8 @@ class AdminBase {
      * Обработчик кнопки "удалить"
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
 
         if (!$this->canDelete) {
             AdminPlugAlert::error('Ошибка! Недостаточно прав для удаления записей в данном разделе', './');
@@ -1126,8 +1171,8 @@ class AdminBase {
         $ids_temp = (isset($_REQUEST['rows']) && is_array($_REQUEST['rows'])) ? $_REQUEST['rows'] : array();
         $ids = array();
         foreach ($ids_temp as $id) {
-            if ((int) $id > 0) {
-                $ids[] = (int) $id;
+            if ((int)$id > 0) {
+                $ids[] = (int)$id;
             }
         }
 
@@ -1169,29 +1214,32 @@ class AdminBase {
         exit;
     }
 
-    protected function portlets($position = 'right') {
-        
+    protected function portlets($position = 'right')
+    {
+
     }
-    
+
     /**
-     * 
+     *
      * @param int $id
      * @return array
      */
-    protected function getRow($id) {
-        $id = (int) $id;
+    protected function getRow($id)
+    {
+        $id = (int)$id;
         $q = "SELECT * FROM $this->table WHERE {$this->pk->name} = $id";
         $row = SFDB::result($q);
         return $row;
     }
 
     /**
-     * 
+     *
      * @param SFDBWhere $where
      * @param bool [optional = true] $withKeys - Если true, ключи массива будут ID записей
      * @return array
      */
-    protected function getRows(SFDBWhere $where = null, $withKeys = true) {
+    protected function getRows(SFDBWhere $where = null, $withKeys = true)
+    {
         $q = "SELECT * FROM $this->table $where";
         $rows = SFDB::assoc($q, $withKeys ? $this->pk->name : false);
         return $rows;

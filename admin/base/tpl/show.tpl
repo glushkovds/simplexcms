@@ -100,7 +100,7 @@ $colRowActionsWidth = 14 + 32 * $this->rowActionsCnt;
                                         <?php foreach ($this->fields as $field): ?>
                                             <?php if ($field->isVisible): ?>
                                                 <td class="<?php echo @$field->params['screen_width'] ? 'screen-width-' . $field->params['screen_width'] : '' ?>">
-                                                    <?php $field->filter(@$_SESSION[$this->table]['filter'][$field->name]) ?>
+                                                    <?= $this->filterField($field) ?>
                                                 </td>
                                             <?php endif ?>
                                         <?php endforeach ?>
