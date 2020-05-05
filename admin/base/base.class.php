@@ -179,26 +179,43 @@ class AdminBase
         echo '<div class="clearfix"></div>' . "\n";
     }
 
-    protected function changeENUM($withRedirect = true)
+    protected function beforeChangeENUM($field, $row, $newValue)
     {
-        $field = SFDB::escape($_REQUEST['field']);
-        $new = SFDB::escape($_REQUEST['newstatus']);
-        $new = $new ? "'$new'" : 'null';
-
         if (!$this->canEdit) {
             AdminPlugAlert::error("В этом разделе запрещено редактировать записи", './');
         }
+        if ($field->readonly) {
+            AdminPlugAlert::error("Поле <b>{$field->label}</b> только для чтения!", './');
+        }
+        return $newValue;
+    }
 
-        $q = "SELECT * FROM struct_data WHERE table_id = {$this->tableData['table_id']} AND name = '$field'";
-        $fieldDB = SFDB::result($q);
-        $fieldParams = unserialize($fieldDB['params']);
-        if (@$fieldParams['main']['readonly']) {
-            AdminPlugAlert::error("Поле <b>{$fieldDB['label']}</b> только для чтения!", './');
+    protected function afterChangeENUM($field, $row, $newValue, $success)
+    {
+
+    }
+
+    protected function changeENUM($withRedirect = true)
+    {
+        $fieldName = $_REQUEST['field'];
+        $newValue = $_REQUEST['newstatus'];
+        $field = $this->fields[$fieldName] ?? null;
+        if (!$field) {
+            AdminPlugAlert::error("Некорректный запрос. Поле не найдено.", './');
         }
 
         $id = (int)$_REQUEST[$this->pk->name];
-        $q = "UPDATE `$this->table` SET `$field` = $new WHERE {$this->pk->name} = $id";
-        SFDB::query($q);
+        $q = "SELECT * FROM `$this->table` WHERE {$this->pk->name} = $id";
+        $row = SFDB::result($q);
+
+        $newValue = $this->beforeChangeENUM($field, $row, $newValue);
+
+        $new = $newValue ? "'$newValue'" : 'null';
+        $q = "UPDATE `$this->table` SET `$field->name` = $new WHERE {$this->pk->name} = $id";
+        $success = SFDB::query($q);
+
+        $this->afterChangeENUM($field, $row, $newValue, $success);
+
         if ($withRedirect) {
             header('location: ./');
             exit;
