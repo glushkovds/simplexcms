@@ -26,11 +26,11 @@ if (!isset($_SERVER['REMOTE_ADDR'])) {
     $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 }
 if (empty($_SERVER['DOCUMENT_ROOT'])) {
-    $_SERVER['DOCUMENT_ROOT'] = dirname(__FILE__);
+    $_SERVER['DOCUMENT_ROOT'] = __DIR__;
 }
 
-include 'autoload.php';
-include 'config.php';
+include "{$_SERVER['DOCUMENT_ROOT']}/autoload.php";
+include "{$_SERVER['DOCUMENT_ROOT']}/config.php";
 
 SFDB::connect();
 
