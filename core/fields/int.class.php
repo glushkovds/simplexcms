@@ -84,7 +84,7 @@ class SFFInt extends SFField
 
     public function getPOST($simple = false, $group = null)
     {
-        return $this->e2n && !$_POST[$this->name] ? 'NULL' : (int)$_POST[$this->name];
+        return $this->e2n && $_POST[$this->name] === '' ? 'NULL' : (int)$_POST[$this->name];
     }
 
     public function filter($value)
