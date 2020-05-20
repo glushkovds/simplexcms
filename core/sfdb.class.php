@@ -335,7 +335,7 @@ class SFDBWhere implements ArrayAccess
      *
      * @param mixed $where
      */
-    public function __construct($where)
+    public function __construct($where = [])
     {
         if ($where instanceof static) {
             $this->data = array_filter($where->toArray());
