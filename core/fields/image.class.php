@@ -1,10 +1,12 @@
 <?php
 
-class SFFImage extends SFFFile {
+class SFFImage extends SFFFile
+{
 
     public $sizes = array();
 
-    public function __construct($row) {
+    public function __construct($row)
+    {
         parent::__construct($row);
         if (!empty($this->params['small'])) {
             $this->sizes['small'] = $this->params['small'];
@@ -17,14 +19,16 @@ class SFFImage extends SFFFile {
         }
     }
 
-    public function loadUI($onForm = false) {
+    public function loadUI($onForm = false)
+    {
         parent::loadUI($onForm);
         if (!$onForm) {
             PlugJQuery::plugFancybox();
         }
     }
 
-    public function input($value) {
+    public function input($value)
+    {
 
         // http://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=no+image
         // /admin/theme/img/noimage.200x150.gif
@@ -38,7 +42,7 @@ class SFFImage extends SFFFile {
         }
 
         $s = '<div class="fileinput fileinput-new" data-provides="fileinput" style="float: left">';
-        $s.='
+        $s .= '
             <div class="fileinput-new thumbnail" style="max-width: 90px; max-height: 90px; float: left">
                 ' . ($source ? '<a href="' . $source . '" class="fancybox"><img src="' . $thumb . '" alt="" /></a>' : '<img src="' . $thumb . '" alt="" />') . '
                 <input type="hidden" class="thumb-noimage" value="' . $thumbNoImage . '" />
@@ -46,7 +50,7 @@ class SFFImage extends SFFFile {
             <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 90px; max-height: 90px; float: left"></div>
         ';
         if (!$this->readonly) {
-            $s.='
+            $s .= '
                 <div style="padding-left: 15px; float: left">
                     <span class="btn btn-default btn-file">
                         <span class="fileinput-new"> Выбрать изображение </span>
@@ -56,9 +60,9 @@ class SFFImage extends SFFFile {
                     <a href="#" class="btn btn-danger fileinput-exists" data-dismiss="fileinput"> Отмена </a>
                 </div>
             ';
-            $s.= '<input type="hidden" name="' . $this->name . '_old" value="' . $value . '" />';
+            $s .= '<input type="hidden" name="' . $this->name . '_old" value="' . $value . '" />';
         }
-        $s.= '</div>';
+        $s .= '</div>';
         if (is_file("../uf/images/{$this->path}source/$value")) {
             $s .= '<p class="form-control-static" style="display: block; float: left; padding-left: 20px">';
             $s .= '<span class="s11">' . round(filesize("../uf/images/{$this->path}source/$value") / 1024) . ' кБ</span>';
@@ -71,29 +75,32 @@ class SFFImage extends SFFFile {
         return $s;
     }
 
-    public function getPOST($simple = false, $group = null) {
+    public function getPOST($simple = false, $group = null)
+    {
         $name = isset($_REQUEST[$this->name . '_old']) ? $_REQUEST[$this->name . '_old'] : '';
         $img = new SFImage($this->path, $this->sizes);
         $img->loadPost($this->name);
-        $name_new = $img->getName();
-        if ($name_new) {
+        $nameNew = $img->getName();
+        if ($nameNew) {
             if ($name) {
                 $img->delete($name);
             }
             $img->save();
-            $name = $name_new;
+            $name = $nameNew;
         }
         return "'$name'";
     }
 
-    public function show($row) {
+    public function show($row)
+    {
         $value = $row[$this->name];
         if (is_file('../uf/images/' . $this->path . 'source/' . $value)) {
             echo '<a class="sff-image" href="/uf/images/' . $this->path . 'source/' . $value . '" target="_blank"><img src="/uf/images/' . $this->path . 'preview/' . $value . '" alt="' . $value . '" /></a>';
         }
     }
 
-    public function delete($value) {
+    public function delete($value)
+    {
         if ($this->required || $this->readonly) {
             return false;
         }

@@ -1,10 +1,12 @@
 <?php
 
-class SFFFile extends SFField {
+class SFFFile extends SFField
+{
 
     public $path = '';
 
-    public function __construct($row) {
+    public function __construct($row)
+    {
         parent::__construct($row);
         if (!empty($this->params['path'])) {
             $path = $this->params['path'];
@@ -16,7 +18,8 @@ class SFFFile extends SFField {
         }
     }
 
-    public function show($row) {
+    public function show($row)
+    {
         if ($row[$this->name]) {
             echo '<a href="/uf/files/' . $this->params['path'] . '/' . $row[$this->name] . '">' . $row[$this->name] . '</a>';
             return;
@@ -24,17 +27,20 @@ class SFFFile extends SFField {
         parent::show($row);
     }
 
-    public function getValue($value) {
+    public function getValue($value)
+    {
         return $value === '' ? '&nbsp;' : '<a href="/' . $this->path . $value . '" target="_blank">' . $value . '</a>';
     }
 
-    public function loadUI($onForm = false) {
+    public function loadUI($onForm = false)
+    {
         if ($onForm) {
             AdminPlugUI::fileInput();
         }
     }
 
-    public function input($value) {
+    public function input($value)
+    {
         if ($this->readonly) {
             $s = '';
         } else {
@@ -68,16 +74,23 @@ class SFFFile extends SFField {
         return $s;
     }
 
-    public function getPOST($simple = false, $group = null) {
+    public function getPOST($simple = false, $group = null)
+    {
         $name = isset($_REQUEST[$this->name . '_old']) ? $_REQUEST[$this->name . '_old'] : '';
         $file = new SFFile($this->path);
-        if ($file->loadPost($this->name) && $name) {
-            $file->delete($name);
+        $file->loadPost($this->name);
+        $nameNew = $file->getName();
+        if ($nameNew) {
+            if ($name) {
+                $file->delete($name);
+            }
+            $name = $nameNew;
         }
-        return "'" . $file->getName() . "'";
+        return "'$name'";
     }
 
-    public function delete($name) {
+    public function delete($name)
+    {
         if ($this->required || $this->readonly) {
             return false;
         }
@@ -85,12 +98,12 @@ class SFFFile extends SFField {
         return $file->delete($name);
     }
 
-    public function check() {
+    public function check()
+    {
         $errors = array();
         if (SFAdminCore::ajax()) {
             if ($this->required && empty($_REQUEST[$this->name]) && empty($_REQUEST[$this->name . '_old'])) {
                 $errors[] = 'Обязательно для заполнения';
-                ;
             }
         } else {
             if ($this->required && (empty($_REQUEST[$this->name . '_old']) && !is_uploaded_file($_FILES[$this->name]['tmp_name']))) {
