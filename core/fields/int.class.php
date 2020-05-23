@@ -76,12 +76,6 @@ class SFFInt extends SFField
         return '<input class="form-control" type="text" name="' . $this->inputName() . '" value="' . htmlspecialchars($value) . '"' . (empty($this->placeholder) ? '' : ' placeholder="' . $this->placeholder . '"') . ($this->readonly ? ' readonly' : '') . ' />';
     }
 
-    public function show($row)
-    {
-        $value = $row[$this->name . ($this->fk ? '_label' : '')];
-        echo $value;
-    }
-
     public function getPOST($simple = false, $group = null)
     {
         return $this->e2n && $_POST[$this->name] === '' ? 'NULL' : (int)$_POST[$this->name];

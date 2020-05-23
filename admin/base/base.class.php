@@ -1263,4 +1263,61 @@ class AdminBase
     }
 
 
+    public function showDetail()
+    {
+        $id = (int)@$_GET['id'];
+        $row = $this->showDetailGetRow($id);
+        include $this->showDetailGetTpl();
+    }
+
+    /**
+     * @return string
+     */
+    protected function showDetailGetTpl()
+    {
+        return 'tpl/show.detail.tpl';
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    protected function showDetailGetRow($id)
+    {
+        $this->vfields = $this->fields;
+        $q = $this->getSelectSelect() . $this->getSelectFrom() . "\nWHERE `{$this->pk->name}` = $id";
+        $row = SFDB::result($q);
+        return $row;
+    }
+
+    /**
+     * @param $row
+     * @param $key
+     * @return mixed|string|void
+     * @throws Exception code == 999 - skip row
+     */
+    protected function showDetailPrepareValue($row, $key)
+    {
+        $value = $row[$key];
+        /** SFField $field */
+        if (empty($field = &$this->fields[$key])) {
+            throw new Exception('Skip this field', 999);
+        }
+        if ($replace = &$row["{$key}_label"]) {
+            $value = $replace;
+        }
+        if (mb_strlen($value) > 1500) {
+            $value = mb_substr($value, 0, 1500) . '...';
+        }
+        if ($field instanceof SFFBool) {
+            $value = $value ? 'Да' : 'Нет';
+        }
+        if ($key == 'params' && substr($value, 0, 2) == 'a:') {
+            $value = '<pre>' . print_r(unserialize($value), true) . '</pre>';
+        }
+        if ($field instanceof SFFImage || $field instanceof SFFFile) {
+            $value = $field->show($row);
+        }
+        return $value;
+    }
 }

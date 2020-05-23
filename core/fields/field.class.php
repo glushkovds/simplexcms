@@ -166,9 +166,14 @@ class SFField {
         return $errors;
     }
 
-    public function show($row) {
-        $value = $row[$this->name];
-        echo $value;
+    public function show($row)
+    {
+        $value = $row[$this->name . ($this->fk ? '_label' : '')];
+        if ($this->pk) {
+            echo '<a href="javascript:openModal(\'?action=showDetail&id=' . htmlspecialchars($value) . '\',function(){$(\'.modal-dialog\').addClass(\'modal-wide\');})">' . $value . '</a>';
+        } else {
+            echo $value;
+        }
     }
 
     public function delete($value) {
