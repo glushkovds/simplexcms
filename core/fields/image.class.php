@@ -93,7 +93,7 @@ class SFFImage extends SFFFile
 
     public function show($row)
     {
-        echo $this->showDetail();
+        echo $this->showDetail($row);
     }
 
     public function showDetail($row)
