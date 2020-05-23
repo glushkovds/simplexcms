@@ -135,7 +135,7 @@ abstract class SFModelBase implements ArrayAccess
     public static function prepareValue($value)
     {
         if ($value instanceof SFDBExpr) {
-            return $value->value;
+            return (string)$value;
         }
         is_array($value) || is_object($value) && $value = print_r($value, true);
         is_numeric($value) && $setValue = $value;

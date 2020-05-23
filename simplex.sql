@@ -783,6 +783,39 @@ INSERT INTO `user` VALUES (1,1,1,'dev','b8700830eb7bdd7a4823df4827f97c28','fb1a3
 UNLOCK TABLES;
 
 --
+-- Table structure for table `user_auth`
+--
+
+DROP TABLE IF EXISTS `user_auth`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `user_auth` (
+  `auth_id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `token` char(32) NOT NULL,
+  `time_create` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `time_last_login` timestamp NULL DEFAULT NULL,
+  `time_expires` timestamp NOT NULL,
+  `useragent` varchar(255) NOT NULL DEFAULT '',
+  `ip` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`auth_id`),
+  KEY `user_auth_user_user_id_fk` (`user_id`),
+  KEY `user_auth_time_last_login_index` (`time_last_login`),
+  KEY `user_auth_token_time_expires_index` (`token`,`time_expires`),
+  CONSTRAINT `user_auth_user_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_auth`
+--
+
+LOCK TABLES `user_auth` WRITE;
+/*!40000 ALTER TABLE `user_auth` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user_auth` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `user_priv`
 --
 
@@ -904,4 +937,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-04-19 20:57:05
+-- Dump completed on 2020-05-23 18:27:58
