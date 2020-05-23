@@ -1,6 +1,7 @@
 <?php
 
-class SFField {
+class SFField
+{
 
     public $form = '';
     public $name = '';
@@ -14,7 +15,7 @@ class SFField {
 
     /**
      *
-     * @var SFForeignKey 
+     * @var SFForeignKey
      */
     public $fk = false;
     public $width = 0;
@@ -44,13 +45,14 @@ class SFField {
      */
     public $isVirtual = false; // SFFVirtual, SFFMultiKey
 
-    public function __construct($row) {
+    public function __construct($row)
+    {
 
         $this->name = $row['name'];
         $this->label = $row['label'];
         $this->table = $row['table'];
-        $this->help = (string) @$row['help'];
-        $this->placeholder = (string) @$row['placeholder'];
+        $this->help = (string)@$row['help'];
+        $this->placeholder = (string)@$row['placeholder'];
         if (isset($row['params']) && is_string($row['params'])) {
             $row['params'] = unserialize($row['params']);
         }
@@ -60,7 +62,7 @@ class SFField {
         $this->setWidth(@$params['width']);
 
         if (!empty($params['pk'])) {
-            $this->pk = (bool) $params['pk'];
+            $this->pk = (bool)$params['pk'];
         }
         if (!empty($params['is_fk'])) {
             $this->fk = new SFForeignKey($params);
@@ -75,14 +77,14 @@ class SFField {
             $this->link = $params['link'];
         }
         if (!empty($params['hidden'])) {
-            $this->hidden = (bool) $params['hidden'];
+            $this->hidden = (bool)$params['hidden'];
         }
         if (!empty($params['e2n'])) {
-            $this->e2n = (bool) $params['e2n'];
-            $this->isnull = (bool) $params['e2n'];
+            $this->e2n = (bool)$params['e2n'];
+            $this->isnull = (bool)$params['e2n'];
         }
         if (!empty($params['isnull'])) {
-            $this->isnull = (bool) $params['isnull'];
+            $this->isnull = (bool)$params['isnull'];
         }
         if (!empty($params['defaultValue'])) {
             $this->defaultValue = $params['defaultValue'];
@@ -91,10 +93,10 @@ class SFField {
             $this->autoIncrement = $params['autoIncrement'];
         }
         if (!empty($params['required'])) {
-            $this->required = (bool) (int) $params['required'];
+            $this->required = (bool)(int)$params['required'];
         }
         if (!empty($params['readonly'])) {
-            $this->readonly = (bool) (int) $params['readonly'];
+            $this->readonly = (bool)(int)$params['readonly'];
         }
         if (!empty($params['editor'])) {
             $this->editor = $params['editor'];
@@ -108,18 +110,20 @@ class SFField {
             $this->onchange = $params['onchange'];
         }
     }
-    
+
     /**
-     * 
+     *
      * @param float $width
      */
-    public function setWidth($width) {
-        $this->width = (empty($width) || (int) $width == 0) ? 0 : (double) $width;
+    public function setWidth($width)
+    {
+        $this->width = (empty($width) || (int)$width == 0) ? 0 : (double)$width;
         $this->isVisible = $this->width > 0;
         $this->styleCol['width'] = $this->width > 1 ? 'width: ' . $this->width . 'px' : (($this->width < 1 && $this->width > 0) ? 'width: ' . round($this->width * 100) . '%' : '');
     }
 
-    public static function setFieldValue(&$field, $group, $params, $row) {
+    public static function setFieldValue(&$field, $group, $params, $row)
+    {
         $p = false;
 //        if (is_string($field)) {
 //            $field = $this->fields[$field];
@@ -137,28 +141,33 @@ class SFField {
         $field->value = $value;
     }
 
-    public function input($value) {
+    public function input($value)
+    {
         $ret = '<input class="form-control" type="text" name="' . $this->inputName() . '" value="' . htmlspecialchars($value) . '"' . (empty($this->placeholder) ? '' : ' placeholder="' . $this->placeholder . '"') . ($this->readonly ? ' readonly' : '') . ' />' . "\n";
 //        help выводится в tpl
         return $ret;
     }
 
-    public function inputName() {
+    public function inputName()
+    {
         return $this->form ? $this->form . '[' . $this->name . ']' : $this->name;
     }
 
-    public function inputHidden($value) {
+    public function inputHidden($value)
+    {
         return '<input type="hidden" name="' . $this->inputName() . '" value="' . htmlspecialchars($value) . '" />';
     }
 
-    public function getPOST($simple = false, $group = null) {
+    public function getPOST($simple = false, $group = null)
+    {
         if ($simple) {
             return $group !== null ? $_POST[$group][$this->name] : $_POST[$this->name];
         }
         return $this->e2n && $_POST[$this->name] === '' ? 'NULL' : "'" . SFDB::escape($_POST[$this->name]) . "'";
     }
 
-    public function check() {
+    public function check()
+    {
         $errors = array();
         if ($this->required && (!isset($_POST[$this->name]) || $_POST[$this->name] === '')) {
             $errors[] = 'Обязательно для заполнения';
@@ -176,26 +185,42 @@ class SFField {
         }
     }
 
-    public function delete($value) {
+    /**
+     * Show in detail card in show mode
+     * @param $row
+     * @return mixed
+     */
+    public function showDetail($row)
+    {
+        $value = $row[$this->name . ($this->fk ? '_label' : '')];
+        return $value;
+    }
+
+    public function delete($value)
+    {
         return true;
     }
 
-    public function defval() {
+    public function defval()
+    {
         return $this->defaultValue;
     }
 
-    public function filter($value) {
+    public function filter($value)
+    {
         if ($this->filter) {
             $inExtra = $this->width == 0;
             echo '<input type="text" class="form-control" name="filter[' . $this->name . ']" placeholder="' . ($inExtra ? htmlspecialchars($this->label) : '') . '" value="' . htmlspecialchars($value) . '" />';
         }
     }
 
-    public function loadUI($onForm = false) {
-        
+    public function loadUI($onForm = false)
+    {
+
     }
 
-    public function selectQueryField() {
+    public function selectQueryField()
+    {
         return '' . $this->table . '.' . $this->name;
     }
 

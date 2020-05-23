@@ -1,25 +1,36 @@
 <?php
 
-class SFFBool extends SFFInt {
+class SFFBool extends SFFInt
+{
 
     public $style = 'text-align:center;';
     public $defaultValue = 0;
 
-    public function input($value) {
+    public function input($value)
+    {
         return '<span class="sf-bool-span"><input type="checkbox" name="' . $this->inputName() . '" value="1" ' . ($value ? 'checked="checked"' : '') . ($this->readonly ? ' readonly' : '') . ' /></span>';
     }
 
-    public function getPOST($simple = false, $group = null) {
+    public function getPOST($simple = false, $group = null)
+    {
         $postValue = $group === null ? @ $_POST[$this->name] : @ $_POST[$group][$this->name];
         return $this->e2n && empty($postValue) ? 'NULL' : (isset($postValue) ? 1 : 0);
     }
 
-    public function show($row) {
+    public function show($row)
+    {
         $value = $row[$this->name];
         echo '<div style="text-align:center"><a class="sff-bool" href="javascript:;">', $value ? 'Да' : 'Нет', '</a></div>';
     }
 
-    public function filter($value) {
+    public function showDetail($row)
+    {
+        $value = $row[$this->name . ($this->fk ? '_label' : '')];
+        return $value ? 'Да' : 'Нет';
+    }
+
+    public function filter($value)
+    {
         if ($this->filter) {
             echo '
                 <div data-toggle="buttons" class="btn-group" style="margin: 0 -4px">

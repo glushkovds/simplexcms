@@ -1303,20 +1303,13 @@ class AdminBase
         if (empty($field = &$this->fields[$key])) {
             throw new Exception('Skip this field', 999);
         }
-        if ($replace = &$row["{$key}_label"]) {
-            $value = $replace;
-        }
         if (mb_strlen($value) > 1500) {
             $value = mb_substr($value, 0, 1500) . '...';
         }
-        if ($field instanceof SFFBool) {
-            $value = $value ? 'Да' : 'Нет';
-        }
         if ($key == 'params' && substr($value, 0, 2) == 'a:') {
             $value = '<pre>' . print_r(unserialize($value), true) . '</pre>';
-        }
-        if ($field instanceof SFFImage || $field instanceof SFFFile) {
-            $value = $field->show($row);
+        } else {
+            $value = $field->showDetail($row);
         }
         return $value;
     }

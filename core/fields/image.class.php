@@ -93,10 +93,16 @@ class SFFImage extends SFFFile
 
     public function show($row)
     {
+        echo $this->showDetail();
+    }
+
+    public function showDetail($row)
+    {
         $value = $row[$this->name];
         if (is_file('../uf/images/' . $this->path . 'source/' . $value)) {
-            echo '<a class="sff-image" href="/uf/images/' . $this->path . 'source/' . $value . '" target="_blank"><img src="/uf/images/' . $this->path . 'preview/' . $value . '" alt="' . $value . '" /></a>';
+            return '<a class="sff-image" href="/uf/images/' . $this->path . 'source/' . $value . '" target="_blank"><img src="/uf/images/' . $this->path . 'preview/' . $value . '" alt="' . $value . '" /></a>';
         }
+        return '';
     }
 
     public function delete($value)

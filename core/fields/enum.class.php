@@ -1,28 +1,31 @@
 <?php
 
-class SFFEnum extends SFFString {
+class SFFEnum extends SFFString
+{
 
     protected $changeURL;
 
-    public function input($value) {
+    public function input($value)
+    {
 
         $this->value = $value;
         $disabled = 1 ? "" : " disabled";
         $this->select = '<select' . $disabled . ' class=" form-control"' . ($this->onchange ? ' onchange="' . $this->onchange . '"' : '') . ' name="' . $this->name . '"' . ($this->readonly ? ' readonly' : '') . '>';
         $values = $this->fetchValues($this->table, $this->name);
         if ($this->e2n) {
-            $this->select.= '<option value=""></option>';
+            $this->select .= '<option value=""></option>';
         }
         foreach ($values as $valAlias => $val) {
             $selected = $value == $valAlias ? ' selected' : '';
-            $this->select.= '<option value="' . $valAlias . '"' . $selected . '>' . $val . '</option>';
+            $this->select .= '<option value="' . $valAlias . '"' . $selected . '>' . $val . '</option>';
         }
-        $this->select.='</select>';
+        $this->select .= '</select>';
         return $this->select;
     }
 
-    protected function fetchValues() {
-        $buffer = & $_ENV['enum_values'][$this->table][$this->name];
+    protected function fetchValues()
+    {
+        $buffer = &$_ENV['enum_values'][$this->table][$this->name];
 
         if (!isset($buffer)) {
             $q = "SHOW FULL COLUMNS FROM `$this->table` LIKE '$this->name'";
@@ -48,22 +51,31 @@ class SFFEnum extends SFFString {
         return $buffer;
     }
 
-    public function filter($value) {
+    public function filter($value)
+    {
         if ($this->filter) {
             $disabled = 1 ? "" : " disabled";
             $select = '<select' . $disabled . ' class="form-control" name="filter[' . $this->name . ']" onchange="submit()">';
-            $select.= '<option value="">---' . $this->label . '---</option>';
+            $select .= '<option value="">---' . $this->label . '---</option>';
             $values = $this->fetchValues();
             foreach ($values as $key => $val) {
                 $selected = $value == $key ? ' selected' : '';
-                $select.= '<option value="' . $key . '"' . $selected . '>' . $val . '</option>';
+                $select .= '<option value="' . $key . '"' . $selected . '>' . $val . '</option>';
             }
-            $select.='</select>';
+            $select .= '</select>';
             echo $select;
         }
     }
 
-    public function show($row) {
+    public function showDetail($row)
+    {
+        $value = $row[$this->name];
+        $values = $this->fetchValues();
+        return @$values[$value];
+    }
+
+    public function show($row)
+    {
         $value0 = $row[$this->name];
         $pkValue = $row[$this->tablePk];
         $values = $this->fetchValues();
