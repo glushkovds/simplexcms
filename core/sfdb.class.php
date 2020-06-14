@@ -396,13 +396,27 @@ class SFDBWhere implements ArrayAccess
     {
         $result = [];
         foreach ($data as $index => $value) {
-            if (!($value = trim($value))) {
+            if (
+                // Skip condition if empty array
+                is_array($value) && !$value
+                // Or if empty trimmed string
+                || !is_array($value) && !($value = trim($value))
+            ) {
                 continue;
             }
             if ($isAssociative = (string)$index !== (string)(int)$index) {
-                $result[] = "`$index` = " . SFModelBase::prepareValue($value);
+                if (is_array($value)) {
+                    $values = implode(',', array_map(['SFModelBase', 'prepareValue'], $value));
+                    $result[] = "`$index` IN ($values)";
+                } else {
+                    $result[] = "`$index` = " . SFModelBase::prepareValue($value);
+                }
             } else {
-                $result[] = $value;
+                if (is_array($value)) {
+                    throw new \Exception('SFDBWhere: array-valued statement must be associative.');
+                } else {
+                    $result[] = $value;
+                }
             }
         }
         return $result;
@@ -596,6 +610,10 @@ class SFDBAQ
 
 }
 
+/**
+ * Class SFDBExpr
+ * Use instance of this class to unescape your statement
+ */
 class SFDBExpr
 {
     protected $value;
@@ -608,5 +626,49 @@ class SFDBExpr
     public function __toString()
     {
         return $this->value;
+    }
+}
+
+/**
+ * Class SFDBExprTypeSet
+ * Syntax sugar for work with MySQL datatype SET
+ * @example We need to remove 'value1' from field `tags` which value is 'value1,value2,value3':
+ *          $model->update(['tags' => SFDBExprTypeSet::remove('tags', 'value1')]);
+ */
+class SFDBExprTypeSet extends SFDBExpr
+{
+    /**
+     * @param string $fieldName
+     * @param string $value
+     * @return static
+     */
+    public static function add($fieldName, $value)
+    {
+        return new static("CONCAT(`$fieldName`,'," . SFDB::escape($value) . "')");
+    }
+
+    /**
+     * @param string $fieldName
+     * @param string $value
+     * @return static
+     */
+    public static function remove($fieldName, $value)
+    {
+        return new static("
+            TRIM(BOTH ',' FROM
+              REPLACE(
+                REPLACE(CONCAT(',',REPLACE(`$fieldName`, ',', ',,'), ','),'," . SFDB::escape($value) . ",', ''), ',,', ','
+              )
+            )");
+    }
+
+    /**
+     * @param string $fieldName
+     * @param string $value
+     * @return static
+     */
+    public static function in($fieldName, $value)
+    {
+        return new static("FIND_IN_SET('" . SFDB::escape($value) . "',`$fieldName`)");
     }
 }

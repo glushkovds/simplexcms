@@ -140,7 +140,7 @@ abstract class SFModelBase implements ArrayAccess
         is_array($value) || is_object($value) && $value = print_r($value, true);
         is_numeric($value) && $setValue = $value;
         is_null($value) && $setValue = 'NULL';
-        is_string($value) && $setValue = '"' . SFDB::escape($value) . '"';
+        is_string($value) && $setValue = "'" . SFDB::escape($value) . "'";
         return $setValue;
     }
 
@@ -180,10 +180,7 @@ abstract class SFModelBase implements ArrayAccess
         }
         $result = false;
         if ($this->beforeUpdate($data)) {
-            $set = [];
-            foreach ($data as $key => $value) {
-                $set[] = "`$key` = " . self::prepareValue($value);
-            }
+            $set = static::prepareSet($data);
             $q = "UPDATE " . static::$table . " SET " . implode(', ', $set) . " WHERE `" . static::$primaryKeyName . "` = $this->id";
             $result = $this->query($q);
             if ($result) {
@@ -192,6 +189,19 @@ abstract class SFModelBase implements ArrayAccess
         }
         $this->afterUpdate($result);
         return $result;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected static function prepareSet($data)
+    {
+        $set = [];
+        foreach ($data as $key => $value) {
+            $set[] = "`$key` = " . static::prepareValue($value);
+        }
+        return $set;
     }
 
     /**
@@ -214,7 +224,7 @@ abstract class SFModelBase implements ArrayAccess
         return $result;
     }
 
-    public static function bulkDelete($where, $viaModels = true)
+    public static function bulkDelete($where, $viaModels = false)
     {
         if ($viaModels) {
             $success = true;
@@ -225,6 +235,28 @@ abstract class SFModelBase implements ArrayAccess
         } else {
             $whereObj = new SFDBWhere($where);
             $q = "DELETE FROM " . static::$table . " $whereObj";
+            return SFDB::query($q);
+        }
+    }
+
+    /**
+     * @param array $set
+     * @param string|array|SFDBWhere $where
+     * @param bool $viaModels
+     * @return bool
+     */
+    public static function bulkUpdate(array $set, $where, $viaModels = false)
+    {
+        if ($viaModels) {
+            $success = true;
+            foreach (static::find($where) as $model) {
+                $success &= $model->update($set);
+            }
+            return $success;
+        } else {
+            $set = static::prepareSet($set);
+            $whereObj = new SFDBWhere($where);
+            $q = "UPDATE " . static::$table . " SET " . implode(', ', $set) . " $whereObj";
             return SFDB::query($q);
         }
     }
@@ -347,8 +379,13 @@ abstract class SFModelBase implements ArrayAccess
 
     public function offsetGet($offset)
     {
-        if ($this->id && !isset($this->data[$offset]) && method_exists($this, $method = 'offsetGet' . $this->underscoreToCamelCase($offset, false))) {
-            $this->data[$offset] = $this->$method();
+        if ($this->id && !isset($this->data[$offset])) {
+            if (method_exists($this, $method = 'offsetGet' . lcfirst($offset))) {
+                $this->data[$offset] = $this->$method();
+            }
+            if (method_exists($this, $method = 'offsetGet' . $this->underscoreToCamelCase($offset, false))) {
+                $this->data[$offset] = $this->$method();
+            }
         }
         return isset($this->data[$offset]) ? $this->data[$offset] : null;
     }
