@@ -445,6 +445,7 @@ class SFDBAQ
     protected $orderBy = '';
     protected $limit = '';
     protected $asArray = false;
+    /** @var SFModelBase|null */
     protected $modelClass;
 
     /**
@@ -577,7 +578,7 @@ class SFDBAQ
         while ($row = SFDB::fetch($r)) {
             $payload = $this->asArray ? $row : (new $this->modelClass)->fill($row);
             if ($assocKey === true) {
-                $result[$row[$this->modelClass::$primaryKeyName]] = $payload;
+                $result[$row[$this->modelClass::getPrimaryKeyName()]] = $payload;
             } elseif (is_array($assocKey)) {
                 $assocKey = array_values($assocKey);
                 switch (count($assocKey)) {

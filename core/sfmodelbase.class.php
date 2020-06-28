@@ -25,6 +25,14 @@ abstract class SFModelBase implements ArrayAccess
     protected static $primaryKeyName;
     protected $lastError = ['code' => 0, 'text' => ''];
 
+    /**
+     * @return string
+     */
+    public static function getPrimaryKeyName()
+    {
+        return static::$primaryKeyName;
+    }
+
     public function getId()
     {
         return $this->id;
