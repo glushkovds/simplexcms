@@ -3,6 +3,7 @@
 define('SF_INADMIN', false);
 define('SF_INSITE', true);
 define('SF_INCRON', false);
+define('SF_INAPI', false);
 
 //date_default_timezone_set('Europe/Moscow');
 date_default_timezone_set('Asia/Yekaterinburg');

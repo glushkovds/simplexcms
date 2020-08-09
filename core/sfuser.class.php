@@ -2,7 +2,6 @@
 
 class SFUser
 {
-
     public static $id = 0;
     public static $login = '';
     public static $role_id = 0;
@@ -128,6 +127,13 @@ class SFUser
         return array('success' => true, 'user_id' => $userId);
     }
 
+    public static function authorizeOnce($login, $password)
+    {
+        $GLOBALS[self::class]['login'] = $login;
+        $GLOBALS[self::class]['password'] = $password;
+        static::login();
+    }
+
 }
 
 class ZSFUserInstance
@@ -186,6 +192,26 @@ class ZSFUserInstance
                     setcookie($this->remHashName, $_COOKIE[$this->remHashName], time() + 60 * 60 * 24 * 3, "/");
                 }
             }
+
+            // Authorization for API, for authorize method
+            if (!empty($GLOBALS[self::class]['login']) && !empty($GLOBALS[self::class]['password'])) {
+                $q = "
+                    SELECT user_id, role_id, login, $this->dbHashName, r.name role_name
+                    FROM user u
+                    JOIN user_role r USING(role_id)
+                    WHERE login='" . SFDB::escape($GLOBALS[self::class]['login']) . "' AND u.active=1 AND r.active=1
+                ";
+                $r = SFDB::query($q);
+                if ($row = SFDB::fetch($r)) {
+                    if (md5($GLOBALS[self::class]['password']) === $row['password']) {
+                        $this->id = (int)$row[$this->idName];
+                        $this->login = $row['login'];
+                        $this->role_id = (int)$row['role_id'];
+                        $this->role_name = $row['role_name'];
+                    }
+                }
+            }
+
             if (!empty($_SESSION[$this->idName]) && !empty($_SESSION[$this->hashName])) {
                 $q = "
                     SELECT user_id, role_id, login, $this->dbHashName, r.name role_name

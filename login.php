@@ -3,6 +3,7 @@
 define('SF_INADMIN', false);
 define('SF_INSITE', true);
 define('SF_INCRON', false);
+define('SF_INAPI', false);
 
 $timeStart = microtime();
 session_start();

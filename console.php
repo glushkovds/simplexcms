@@ -11,6 +11,7 @@ ini_set('display_errors', 1);
 define('SF_INADMIN', false);
 define('SF_INSITE', false);
 define('SF_INCRON', true);
+define('SF_INAPI', false);
 
 ini_set('max_execution_time', 600);
 ini_set('iconv.internal_encoding', 'UTF-8');

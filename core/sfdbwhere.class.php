@@ -8,6 +8,7 @@ class SFDBWhere implements ArrayAccess
     /**
      *
      * @param mixed $where
+     * @throws Exception
      */
     public function __construct($where = [])
     {

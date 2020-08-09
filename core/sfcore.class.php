@@ -5,7 +5,8 @@
  * and open the template in the editor.
  */
 
-class SFCore {
+class SFCore
+{
 
     private static $ajax = false;
     private static $uri = array();
@@ -20,18 +21,20 @@ class SFCore {
     private static $component_menu_id = 0;
     private static $content_only = false;
 
-    private function __construct() {
-        
+    private function __construct()
+    {
+
     }
 
-    public static function init() {
+    public static function init()
+    {
         $url_info = parse_url($_SERVER['REQUEST_URI']);
         self::$path = $url_info['path'];
         self::$uri = array_slice(explode('/', self::$path), 1);
         SFDB::bind(array('SITE_PATH' => self::$path, 'SITE_LINK' => $url_info['path'] . (isset($url_info['query']) ? '?' . $url_info['query'] : '')));
-        
-        if(!empty($_REQUEST['sf_plug_name'])){
-            $plug = 'Plug'.ucfirst(SFDB::escape($_REQUEST['sf_plug_name']));
+
+        if (!empty($_REQUEST['sf_plug_name'])) {
+            $plug = 'Plug' . ucfirst(SFDB::escape($_REQUEST['sf_plug_name']));
             $method = empty($_REQUEST['sf_plug_method']) ? 'execute' : SFDB::escape($_REQUEST['sf_plug_method']);
             $plug::$method();
             exit;
@@ -40,7 +43,7 @@ class SFCore {
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
             self::$ajax = true;
             self::$content_only = true;
-            $sf_module_id = isset($_REQUEST['sf_module_id']) ? (int) $_REQUEST['sf_module_id'] : 0;
+            $sf_module_id = isset($_REQUEST['sf_module_id']) ? (int)$_REQUEST['sf_module_id'] : 0;
             if ($sf_module_id > 0) {
                 SFPage::moduleById($sf_module_id);
                 exit();
@@ -66,8 +69,8 @@ class SFCore {
         ORDER BY t1.npp";
         $rows = SFDB::assoc($q);
         foreach ($rows as $row) {
-            self::$menu_tree[(int) $row['menu_pid']][(int) $row['menu_id']] = $row;
-            self::$menu_by_id[(int) $row['menu_id']] = $row;
+            self::$menu_tree[(int)$row['menu_pid']][(int)$row['menu_id']] = $row;
+            self::$menu_by_id[(int)$row['menu_id']] = $row;
             self::$menu_by_link[md5($row['link'])] = $row;
             self::$menu_by_ext[strtolower(substr($row['class'], 3))][] = $row;
             if ($row['link'] == self::$path && !self::$menu_cur) {
@@ -76,25 +79,28 @@ class SFCore {
         }
     }
 
-    public static function ajax() {
+    public static function ajax()
+    {
         return self::$ajax;
     }
 
-    public static function uri($i = false) {
+    public static function uri($i = false)
+    {
         if ($i === false) {
             return self::$uri;
         }
-        $i+= self::$component_level;
+        $i += self::$component_level;
         return isset(self::$uri[$i]) ? self::$uri[$i] : '';
     }
 
-    public static function uri_r($i) {
-        $i = count(self::$uri) - 2 - $i;
-        ;
+    public static function uri_r($i)
+    {
+        $i = count(self::$uri) - 2 - $i;;
         return isset(self::$uri[$i]) ? self::$uri[$i] : '';
     }
 
-    public static function path($beg = 0, $len = 0) {
+    public static function path($beg = 0, $len = 0)
+    {
         $path = self::$path;
 
         $beg = $beg < 0 ? count(self::$uri) + $beg : $beg;
@@ -105,9 +111,10 @@ class SFCore {
         return $path ? $path : '/';
     }
 
-    public static function siteParam($key = false) {
+    public static function siteParam($key = false)
+    {
 
-        if(!self::$site_params) {
+        if (!self::$site_params) {
             $q = "SELECT alias, value FROM settings";
             $rows = SFDB::assoc($q);
             foreach ($rows as $row) {
@@ -125,7 +132,8 @@ class SFCore {
         return isset(self::$site_params[$key]) ? self::$site_params[$key] : '';
     }
 
-    public static function getComponent() {
+    public static function getComponent()
+    {
         $class = $classDefault = SFConfig::$component_default;
         $path = '/';
         $i = 0;
@@ -137,7 +145,7 @@ class SFCore {
         $i++;
         foreach (self::$uri as $u) {
             if ($u) {
-                $path.=$u . '/';
+                $path .= $u . '/';
                 if (!empty(self::$menu_by_link[md5($path)])) {
                     $class = self::$menu_by_link[md5($path)]['class'] ?: $classDefault;
                     self::$component_level = $i;
@@ -149,7 +157,40 @@ class SFCore {
         return new $class();
     }
 
-    public static function execute() {
+    public static function getComponentAPI()
+    {
+
+        $class = '';
+        $path = '/';
+        $i = 0;
+        if (!empty(self::$menu_by_link[md5($path)]['class'])) {
+            $class = self::$menu_by_link[md5($path)]['class'];
+            self::$component_level = $i;
+            self::$component_menu_id = self::$menu_by_link[md5($path)]['menu_id'];
+        }
+        $i++;
+        foreach (self::$uri as $u) {
+            if ($u) {
+                $path .= $u . '/';
+                if (!empty(self::$menu_by_link[md5($path)]['class'])) {
+                    $class = self::$menu_by_link[md5($path)]['class'];
+                    self::$component_level = $i;
+                    self::$component_menu_id = self::$menu_by_link[md5($path)]['menu_id'];
+                }
+            }
+            $i++;
+        }
+
+        if ($class) {
+            $class = 'Api' . substr($class, 3);
+            return new $class();
+        } else {
+            return false;
+        }
+    }
+
+    public static function execute()
+    {
         if (self::$content_only) {
             SFPage::content();
         } else {
@@ -163,36 +204,46 @@ class SFCore {
         }
     }
 
-    public static function menu($type = 'tree') {
+    public static function menu($type = 'tree')
+    {
         switch ($type) {
-            case 'by_id' : return self::$menu_by_id;
-            case 'by_link' : return self::$menu_by_link;
-            case 'by_ext' : return self::$menu_by_ext;
+            case 'by_id' :
+                return self::$menu_by_id;
+            case 'by_link' :
+                return self::$menu_by_link;
+            case 'by_ext' :
+                return self::$menu_by_ext;
         }
         return self::$menu_tree;
     }
 
-    public static function menuCurItem() {
+    public static function menuCurItem()
+    {
         return self::$menu_cur;
     }
 
-    public static function componentPath() {
+    public static function componentPath()
+    {
         return self::path(self::$component_level);
     }
 
-    public static function componentLevel() {
+    public static function componentLevel()
+    {
         return self::$component_level;
     }
 
-    public static function componentMenuID() {
+    public static function componentMenuID()
+    {
         return self::$component_menu_id;
     }
 
-    public static function componentTitle() {
+    public static function componentTitle()
+    {
         return self::$menu_by_id[self::$component_menu_id]['name'];
     }
 
-    public static function error404() {
+    public static function error404()
+    {
         header("HTTP/1.0 404 Not Found");
         SFPage::seo('Error 404');
         if (is_file('theme/' . SFConfig::$theme . '/404.tpl')) {
@@ -202,21 +253,23 @@ class SFCore {
             echo self::siteParam('error404');
         }
     }
-    
+
     /**
-     * 
+     *
      * @return bool
      */
-    public static function isHttps() {
+    public static function isHttps()
+    {
         return !empty($_SERVER['HTTPS']);
     }
 
     /**
-     * 
+     *
      * @param bool $withSlashDots [optional = false] ://
      * @return string https / http
      */
-    public static function httpProtocol($withSlashDots = false) {
+    public static function httpProtocol($withSlashDots = false)
+    {
         return (self::isHttps() ? 'https' : 'http') . ($withSlashDots ? '://' : '');
     }
 
