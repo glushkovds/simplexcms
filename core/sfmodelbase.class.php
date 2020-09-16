@@ -62,12 +62,29 @@ abstract class SFModelBase implements ArrayAccess
     }
 
     /**
+     * @param string $fieldName
+     * @param bool $withBuffer
+     * @return array
+     */
+    public static function enumValues($fieldName, $withBuffer = true)
+    {
+        $closure = function () use ($fieldName) {
+            return SFDB::enumValues(static::$table, $fieldName);
+        };
+        if ($withBuffer && class_exists('SFBuffer')) {
+            return SFBuffer::getOrSet('enumValues.' . static::$table . ".$fieldName", $closure);
+        }
+        return $closure();
+    }
+
+    /**
      *
      * @param string|array|SFDBWhere $where
      * @param null $orderBy
      * @param null $limit
      * @param bool|string $assocKey [optional = false] get result array with model id's (or other field) in keys
      * @return SFModelBase[]
+     * @throws Exception
      */
     public static function find($where, $orderBy = null, $limit = null, $assocKey = false)
     {
