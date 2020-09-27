@@ -166,6 +166,7 @@ abstract class SFModelBase implements ArrayAccess
         is_numeric($value) && $setValue = $value;
         is_null($value) && $setValue = 'NULL';
         is_string($value) && $setValue = "'" . SFDB::escape($value) . "'";
+        is_bool($value) && $setValue = (int)$value;
         return $setValue;
     }
 
