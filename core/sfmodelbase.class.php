@@ -177,6 +177,21 @@ abstract class SFModelBase implements ArrayAccess
     }
 
     /**
+     * @param array|null $data
+     * @param int $flags
+     * @return static|null
+     */
+    public static function insertStatic(array $data = null, $flags = 0)
+    {
+        $model = new static;
+        if ($model->insert($data, $flags)) {
+            $model->reload();
+            return $model;
+        }
+        return null;
+    }
+
+    /**
      *
      * @param array $data
      * @return bool
